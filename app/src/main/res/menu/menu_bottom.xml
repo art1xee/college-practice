@@ -1,0 +1,33 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Menu item to show Home Fragment -->
+    <item
+        android:id="@+id/menu_home"
+        android:icon="@drawable/ic_home_white"
+        android:title="@string/ic_text_home" />
+
+    <!-- Menu item to show Chats Fragment -->
+    <item
+        android:id="@+id/menu_chats"
+        android:icon="@drawable/ic_chats_white"
+        android:title="@string/ic_text_chats" />
+
+    <!-- Menu item to show Sell Fragment -->
+    <item
+        android:id="@+id/menu_sell"
+        android:enabled="false"
+        android:title="@string/ic_text_sell" />
+
+    <!-- Menu item to show My Ads Fragment -->
+    <item
+        android:id="@+id/menu_my_ads"
+        android:icon="@drawable/ic_heart_white"
+        android:title="@string/ic_text_favorite" />
+
+    <!-- Menu item to show Account Fragment -->
+    <item
+        android:id="@+id/menu_account"
+        android:icon="@drawable/ic_account_white"
+        android:title="@string/ic_text_account" />
+
+</menu>

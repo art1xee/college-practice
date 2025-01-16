@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Phone Shop (College Practice)</string>
+    <string name="ic_text_sell">Sell</string>
+    <string name="ic_text_chats">Chats</string>
+    <string name="ic_text_home">Home</string>
+    <string name="ic_text_favorite">My Ads</string>
+    <string name="ic_text_account">Account</string>
+    <string name="above_text_home">Home</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
