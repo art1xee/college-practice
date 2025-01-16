@@ -39,6 +39,7 @@ model User {
   password      String?
   emailVerified DateTime? @map("email_verified")
   image         String?
+  role          UserRole @default(USER)
   accounts      Account[]
  
   @@map("users")
