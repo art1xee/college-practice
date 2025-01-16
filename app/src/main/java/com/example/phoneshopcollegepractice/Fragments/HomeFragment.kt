@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import com.example.phoneshopcollegepractice.R
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
