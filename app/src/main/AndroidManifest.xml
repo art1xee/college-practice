@@ -13,7 +13,10 @@
         android:theme="@style/Theme.PhoneShopCollegePractice"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.LoginOptionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.PhoneShopCollegePractice">
