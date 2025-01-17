@@ -1,4 +1,5 @@
 import * as z from "zod";
+import validator from "validator";
 
 export const SettingsSchema = z.object({
     name: z.optional(z.string()),
@@ -8,6 +9,7 @@ export const SettingsSchema = z.object({
 
 export const LoginSchema = z.object({
     email: z.string().email(),
+    number: z.optional(z.string().refine(validator.isMobilePhone)),
     password: z.string().min(1 ,{
         message: "Password is required"
     }),
