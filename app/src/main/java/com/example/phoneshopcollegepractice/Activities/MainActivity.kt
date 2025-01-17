@@ -2,13 +2,12 @@ package com.example.phoneshopcollegepractice.Activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.phoneshopcollegepractice.Fragments.AccountFragment
-import com.example.phoneshopcollegepractice.Fragments.ChatsFragment
-import com.example.phoneshopcollegepractice.Fragments.HomeFragment
-import com.example.phoneshopcollegepractice.Fragments.MyAdsFragment
+import androidx.fragment.app.Fragment
+import com.example.phoneshopcollegepractice.ViewModels.MainViewModel
+import com.example.phoneshopcollegepractice.ViewModels.NavigationEvent
 import com.example.phoneshopcollegepractice.R
 import com.example.phoneshopcollegepractice.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -20,139 +19,94 @@ class MainActivity : AppCompatActivity() {
     //Firebase Auth for auth related tasks
     private lateinit var firebaseAuth: FirebaseAuth
 
+    // ViewModel for managing UI-related data
+    private val viewModel: MainViewModel by viewModels()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge()// Enables edge-to-edge display
 
-        // activity_main.xml = ActivityMainBinding
+        // Initialize view binding for activity_main.xml
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize Firebase Authentication
         firebaseAuth = FirebaseAuth.getInstance()
 
 
+        // If the user is not logged in, navigate to the LoginOptionsActivity
         if (firebaseAuth.currentUser == null) {
-        //user is not logged in, move to LoginOptionActivity
+            //user is not logged in, move to LoginOptionActivity
             startLoginOptions()
         }
 
-        //By default (when app is open) show homeFragment
-        showHomeFragment()
+        // Observe changes in ViewModel (e.g., current fragment and toolbar title)
+        observeViewModel()
 
+        // Set up the bottom navigation bar with fragment navigation
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_home -> {
-                    //Home item clicked, show HomeFragment
+                    // Navigate to HomeFragment when "Home" menu is selected
 
-                    showHomeFragment()
+                    viewModel.onNavigationEvent(NavigationEvent.Home)
                     true
                 }
 
                 R.id.menu_chats -> {
-                    //Chats item clicked, show ChatsFragment
-                    showChatsFragments()
+                    // Navigate to ChatsFragment when "Chats" menu is selected
+
+                    viewModel.onNavigationEvent(NavigationEvent.Chats)
                     true
                 }
 
                 R.id.menu_my_ads -> {
-                    //My Ads item clicked, show MyAdsFragment
+                    // Navigate to MyAdsFragment when "My Ads" menu is selected
 
-                    showMyAdsFragments()
+                    viewModel.onNavigationEvent(NavigationEvent.MyAds)
                     true
                 }
-
 
                 R.id.menu_account -> {
-                    //Account item clicked, show AccountFragment
-                    showAccountFragments()
+                    // Navigate to AccountFragment when "Account" menu is selected
+
+                    viewModel.onNavigationEvent(NavigationEvent.Account)
                     true
                 }
 
-                else -> {
-                    false
-                }
+                else -> false
             }
 
         }
 
-
     }
 
-    //APP lifecycle
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "MainActivity onStart")
+    /*
+    BLOCK FOR APP LIFECYCLE
+     */
+
+
+    // Observes ViewModel changes to update UI elements (e.g., fragment and toolbar title)
+    private fun observeViewModel() {
+        viewModel.currentFragment.observe(this) { fragmentClass ->
+            val fragment = fragmentClass.newInstance()
+            showFragment(fragment)
+        }
+        viewModel.toolbarTitle.observe(this) { title ->
+            binding.toolBarTitleTv.text = title
+
+        }
     }
 
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "MainActivity onStop")
+    // Replaces the current fragment in the container with the provided fragment
+    private fun showFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(binding.fragmentsFl.id, fragment)
+            .commit()
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "MainActivity onPause")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "MainActivity onResume")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        Log.d(TAG, "MainActivity onRestart")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "MainActivity onDestroy")
-    }
-
-
-    //Function`s to show Fragment`s
-    private fun showHomeFragment() {
-        binding.toolBarTitleTv.text = "Home"
-
-        // Show Home fragment
-        val fragment = HomeFragment()
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(binding.fragmentsFl.id, fragment, "HomeFragment")
-        fragmentTransaction.commit()
-    }
-
-    private fun showChatsFragments() {
-        binding.toolBarTitleTv.text = "Chats"
-
-        //Show Chats fragment
-        val fragment = ChatsFragment()
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(binding.fragmentsFl.id, fragment, "ChatsFragment")
-        fragmentTransaction.commit()
-
-
-    }
-
-    private fun showMyAdsFragments() {
-        binding.toolBarTitleTv.text = "My Ads"
-
-        //Show my Ads fragment
-        val fragment = MyAdsFragment()
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(binding.fragmentsFl.id, fragment, "MyAdsFragment")
-        fragmentTransaction.commit()
-    }
-
-    private fun showAccountFragments() {
-        binding.toolBarTitleTv.text = "Account"
-
-        //Show Account fragment
-        val fragment = AccountFragment()
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(binding.fragmentsFl.id, fragment, "AccountFragment")
-        fragmentTransaction.commit()
-    }
-
+    // Starts LoginOptionsActivity for users who are not logged in
     private fun startLoginOptions() {
         startActivity(Intent(this, LoginOptionsActivity::class.java))
     }
