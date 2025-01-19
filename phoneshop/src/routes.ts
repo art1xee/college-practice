@@ -1,5 +1,6 @@
 export const PublicRoutes = [
-    "/"
+    "/",
+    "/add-announcement"
 ];
 
 export const authRoutes = [
