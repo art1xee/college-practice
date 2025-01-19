@@ -43,8 +43,7 @@ export const LoginForm = () => {
         login(values)
          .then((data) => {
            setError(data?.error);
-           // TODO: ADD when we add 2FA (то есть делать не будем, если не нужна двухфакторка)
-           // setSuccess(data?.success);
+           setSuccess(data?.success);
          })
      });
     };
