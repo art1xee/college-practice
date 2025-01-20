@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.phoneshopcollegepractice.ViewModels.MainViewModel
 import com.example.phoneshopcollegepractice.ViewModels.NavigationEvent
 import com.example.phoneshopcollegepractice.R
+import com.example.phoneshopcollegepractice.Utils.TokenManager
 import com.example.phoneshopcollegepractice.Utils.Utils
 import com.example.phoneshopcollegepractice.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -33,20 +34,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Initialize Firebase Authentication
-        firebaseAuth = FirebaseAuth.getInstance()
-
-
-        /* FOR CHECKING ACCOUNT REGISTRATION
-         firebaseAuth.signOut()
-
-         //Переход на экран регистрации
-
-         startLoginOptions()
-         */
-
+//        firebaseAuth = FirebaseAuth.getInstance()
 
         // If the user is not logged in, navigate to the LoginOptionsActivity
-        if (firebaseAuth.currentUser == null) {
+        if (!TokenManager.isLoggedIn(this)) {
             //user is not logged in, move to LoginOptionActivity
             startLoginOptions()
         }
