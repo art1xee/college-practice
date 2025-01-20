@@ -17,6 +17,7 @@ export const LoginSchema = z.object({
 
 export const RegisterSchema = z.object({
     email: z.string().email(),
+    number: z.optional(z.string().refine(validator.isMobilePhone)),
     password: z.string().min(6 ,{
         message: "Minimum 6 characters required"
     }),
