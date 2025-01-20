@@ -42,8 +42,22 @@ model User {
   image         String?
   role          UserRole @default(USER)
   accounts      Account[]
+
+  phones        Phone[]   
  
   @@map("users")
+}
+
+model Phone {
+  id          Int      @id @default(autoincrement())
+  name        String
+  brand       String
+  imageUrl    String?
+  price       Float?
+  description String?
+  createdAt   DateTime @default(now())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {
