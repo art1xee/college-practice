@@ -1,5 +1,6 @@
 import React from 'react';
 import NavigationBar from '@/components/frontend//NavigationBar';
+import { Button } from "@/components/ui/button";
 
 const ProfilePage: React.FC = () => {
   return (
@@ -28,20 +29,24 @@ const ProfilePage: React.FC = () => {
             <div className="space-y-6 text-gray-600">
               <div>
                 <label className="block text-gray-800 font-medium">Ім’я</label>
-                <p>Вкажіть ім’я та прізвище</p>
+                <p>Іванов Андрій</p>
               </div>
               <div>
                 <label className="block text-gray-800 font-medium">Місцезнаходження</label>
-                <p>Вкажіть ваше місцезнаходження</p>
+                <p>Запоріжжя</p>
               </div>
               <div>
                 <label className="block text-gray-800 font-medium">Номер телефону</label>
-                <p>Вкажіть ваш номер телефону</p>
+                <p>0661234567</p>
               </div>
             </div>
-            <button className="mt-0 bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600">
-              Редагувати
-            </button>
+            <div className='py-3 flex justify-end'>
+            <a href="/profile-edit">
+          <Button variant="default" className="bg-orange-500 text-white">
+            Редагувати 
+          </Button>
+            </a>
+            </div>
           </div>
         </div>
       </main>
