@@ -23,7 +23,7 @@ const HeaderMain: React.FC = () => {
           >
             Ваш профіль
           </a>
-          <a href="/add-announcement">
+          <a href="/new-product">
             <Button variant="default" className="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600 transition duration-300 ml-4"> {/* Увеличен отступ между кнопкой и правым краем */}
               Додати оголошення
             </Button>
