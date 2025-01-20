@@ -1,6 +1,8 @@
 export const PublicRoutes = [
     "/",
-    "/catalog"
+    "/catalog",
+    "/api/phone/auth/login",
+    "/api/phone/auth/register"
 ];
 
 export const authRoutes = [
@@ -8,8 +10,6 @@ export const authRoutes = [
     "/register",
     "/error",
     "/new-verification",
-    "/api/phone/auth/login",
-    "/api/phone/auth/register"
 ];
 
 export const apiAuthPrefix = "/api/auth";
