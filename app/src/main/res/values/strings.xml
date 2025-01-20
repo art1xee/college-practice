@@ -8,4 +8,15 @@
     <string name="above_text_home">Home</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_tv">Login</string>
+    <string name="login_to_your_account_label">Login To Your Account!</string>
+    <string name="email_hint_out_lined_box">Email</string>
+    <string name="password_out_lined_box">Password</string>
+    <string name="no_have_an_account_register">No have an Account? <b> Register! </b></string>
+    <string name="login_btn">Login</string>
+    <string name="register_label">Register</string>
+    <string name="create_a_new_account_label">Create a New Account</string>
+    <string name="confirm_password_out_lined_box">Confirm Password</string>
+    <string name="already_have_account_login">Already have account? <b> Login! </b></string>
+    <string name="create_an_account_btn">Register</string>
 </resources>

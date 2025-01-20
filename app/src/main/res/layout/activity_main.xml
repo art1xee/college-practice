@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:background="@color/colorGrey02" />
+            android:background="@color/colorGray02" />
 
 
     </RelativeLayout>
@@ -42,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_above="@+id/bottomNav"
-        android:background="@color/colorGrey02" />
+        android:background="@color/colorGray02" />
 
     <!-- BottomNavigationView -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
