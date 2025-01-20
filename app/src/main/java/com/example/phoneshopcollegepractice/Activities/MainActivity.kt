@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.phoneshopcollegepractice.ViewModels.MainViewModel
 import com.example.phoneshopcollegepractice.ViewModels.NavigationEvent
 import com.example.phoneshopcollegepractice.R
+import com.example.phoneshopcollegepractice.Utils.Utils
 import com.example.phoneshopcollegepractice.databinding.ActivityMainBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -35,6 +36,15 @@ class MainActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance()
 
 
+        /* FOR CHECKING ACCOUNT REGISTRATION
+         firebaseAuth.signOut()
+
+         //Переход на экран регистрации
+
+         startLoginOptions()
+         */
+
+
         // If the user is not logged in, navigate to the LoginOptionsActivity
         if (firebaseAuth.currentUser == null) {
             //user is not logged in, move to LoginOptionActivity
@@ -56,23 +66,40 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.menu_chats -> {
                     // Navigate to ChatsFragment when "Chats" menu is selected
-
-                    viewModel.onNavigationEvent(NavigationEvent.Chats)
-                    true
+                    if (firebaseAuth.currentUser == null) {
+                        Utils.toast(this, "Login Required")
+                        startLoginOptions()
+                        false
+                    } else {
+                        viewModel.onNavigationEvent(NavigationEvent.Chats)
+                        true
+                    }
                 }
 
                 R.id.menu_my_ads -> {
                     // Navigate to MyAdsFragment when "My Ads" menu is selected
 
-                    viewModel.onNavigationEvent(NavigationEvent.MyAds)
-                    true
+                    if (firebaseAuth.currentUser == null) {
+                        Utils.toast(this, "Login Required")
+                        startLoginOptions()
+                        false
+                    } else {
+                        viewModel.onNavigationEvent(NavigationEvent.MyAds)
+                        true
+                    }
+
                 }
 
                 R.id.menu_account -> {
                     // Navigate to AccountFragment when "Account" menu is selected
-
-                    viewModel.onNavigationEvent(NavigationEvent.Account)
-                    true
+                    if (firebaseAuth.currentUser == null) {
+                        Utils.toast(this, "Login Required")
+                        startLoginOptions()
+                        false
+                    } else {
+                        viewModel.onNavigationEvent(NavigationEvent.Account)
+                        true
+                    }
                 }
 
                 else -> false
