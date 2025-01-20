@@ -37,7 +37,7 @@ const ProductDetailsPage = () => {
   }
 
   const breadcrumbItems = [
-    { label: "Головна", href: "/shop" },
+    { label: "Головна", href: "/" },
     { label: "Каталог", href: "/catalog" },
     { label: phone.name, href: "#" },
   ];
