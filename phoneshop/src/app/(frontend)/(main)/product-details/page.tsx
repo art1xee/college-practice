@@ -42,7 +42,7 @@ const Index = () => {
             </Button>
 
             <SellerInfo
-              name="М'я Прізвище"
+              name="Ім'я Прізвище"
               joinDate="2023"
               avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
             />

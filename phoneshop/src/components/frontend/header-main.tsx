@@ -17,7 +17,7 @@ const HeaderMain: React.FC = () => {
           Чат 
         </a>
         <a
-          href="#"
+          href="/profile"
           className="text-white hover:text-gray-200 transition duration-200"
         >
           Ваш профіль 
