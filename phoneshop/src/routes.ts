@@ -2,7 +2,8 @@ export const PublicRoutes = [
     "/",
     "/catalog",
     "/api/phone/auth/login",
-    "/api/phone/auth/register"
+    "/api/phone/auth/register",
+    "/api/phoneshop"
 ];
 
 export const authRoutes = [
