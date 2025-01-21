@@ -7,7 +7,7 @@ import android.util.Log
 import android.util.Patterns
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.example.phoneshopcollegepractice.Api.RetrofitClient
+import com.example.phoneshopcollegepractice.Utils.RetrofitClient
 import com.example.phoneshopcollegepractice.Api.models.RegisterRequest
 import com.example.phoneshopcollegepractice.Api.models.RegisterResponse
 import com.example.phoneshopcollegepractice.Utils.TokenManager

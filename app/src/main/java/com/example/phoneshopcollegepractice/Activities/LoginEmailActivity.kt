@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.util.Patterns
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.example.phoneshopcollegepractice.Api.*
 import com.example.phoneshopcollegepractice.Api.models.LoginRequest
 import com.example.phoneshopcollegepractice.Api.models.LoginResponse
+import com.example.phoneshopcollegepractice.Utils.RetrofitClient
 import com.example.phoneshopcollegepractice.Utils.TokenManager
 import com.example.phoneshopcollegepractice.Utils.Utils
 import com.example.phoneshopcollegepractice.databinding.ActivityLoginEmailBinding

@@ -6,20 +6,23 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.phoneshopcollegepractice.Fragments.AccountFragment
+import com.example.phoneshopcollegepractice.Fragments.ChatsFragment
+import com.example.phoneshopcollegepractice.Fragments.HomeFragment
+import com.example.phoneshopcollegepractice.Fragments.MyAdsFragment
 import com.example.phoneshopcollegepractice.ViewModels.MainViewModel
 import com.example.phoneshopcollegepractice.ViewModels.NavigationEvent
 import com.example.phoneshopcollegepractice.R
-import com.example.phoneshopcollegepractice.Utils.TokenManager
 import com.example.phoneshopcollegepractice.Utils.Utils
+import com.example.phoneshopcollegepractice.ViewModels.AppScreen
 import com.example.phoneshopcollegepractice.databinding.ActivityMainBinding
-import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
 
     //Firebase Auth for auth related tasks
-    private lateinit var firebaseAuth: FirebaseAuth
+//    private lateinit var firebaseAuth: FirebaseAuth
 
     // ViewModel for managing UI-related data
     private val viewModel: MainViewModel by viewModels()
@@ -33,15 +36,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Firebase Authentication
-//        firebaseAuth = FirebaseAuth.getInstance()
-
-        // If the user is not logged in, navigate to the LoginOptionsActivity
-        if (!TokenManager.isLoggedIn(this)) {
-            //user is not logged in, move to LoginOptionActivity
-            startLoginOptions()
-        }
-
         // Observe changes in ViewModel (e.g., current fragment and toolbar title)
         observeViewModel()
 
@@ -50,47 +44,41 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.menu_home -> {
                     // Navigate to HomeFragment when "Home" menu is selected
-
-                    viewModel.onNavigationEvent(NavigationEvent.Home)
+                    viewModel.onHomeClick()
                     true
                 }
 
                 R.id.menu_chats -> {
+                    viewModel.onChatsClick()
                     // Navigate to ChatsFragment when "Chats" menu is selected
-                    if (firebaseAuth.currentUser == null) {
-                        Utils.toast(this, "Login Required")
-                        startLoginOptions()
-                        false
-                    } else {
-                        viewModel.onNavigationEvent(NavigationEvent.Chats)
-                        true
-                    }
+                    true
                 }
 
                 R.id.menu_my_ads -> {
                     // Navigate to MyAdsFragment when "My Ads" menu is selected
 
-                    if (firebaseAuth.currentUser == null) {
-                        Utils.toast(this, "Login Required")
-                        startLoginOptions()
-                        false
-                    } else {
-                        viewModel.onNavigationEvent(NavigationEvent.MyAds)
-                        true
-                    }
-
+//                    if (true/*firebaseAuth.currentUser == null*/) {
+//                        Utils.toast(this, "Login Required")
+//                        startLoginOptions()
+//                        false
+//                    } else {
+//                        viewModel.onNavigationEvent(NavigationEvent.MyAds)
+//                        true
+//                    }
+                    true
                 }
 
                 R.id.menu_account -> {
                     // Navigate to AccountFragment when "Account" menu is selected
-                    if (firebaseAuth.currentUser == null) {
-                        Utils.toast(this, "Login Required")
-                        startLoginOptions()
-                        false
-                    } else {
-                        viewModel.onNavigationEvent(NavigationEvent.Account)
-                        true
-                    }
+//                    if (true/*firebaseAuth.currentUser == null*/) {
+//                        Utils.toast(this, "Login Required")
+//                        startLoginOptions()
+//                        false
+//                    } else {
+//                        viewModel.onNavigationEvent(NavigationEvent.Account)
+//                        true
+//                    }
+                    true
                 }
 
                 else -> false
@@ -107,13 +95,40 @@ class MainActivity : AppCompatActivity() {
 
     // Observes ViewModel changes to update UI elements (e.g., fragment and toolbar title)
     private fun observeViewModel() {
-        viewModel.currentFragment.observe(this) { fragmentClass ->
-            val fragment = fragmentClass.newInstance()
-            showFragment(fragment)
+        viewModel.currentScreen.observe(this) { screen ->
+            showAppScreen(screen)
         }
         viewModel.toolbarTitle.observe(this) { title ->
             binding.toolBarTitleTv.text = title
+        }
+        viewModel.toastMessage.observe(this) { message ->
+            Utils.toast(this, message)
+        }
+    }
 
+    private fun showAppScreen(screen: AppScreen?) {
+        when (screen) {
+            AppScreen.Account -> {
+                showFragment(AccountFragment())
+            }
+
+            AppScreen.Chats -> {
+                showFragment(ChatsFragment())
+            }
+
+            AppScreen.Home -> {
+                showFragment(HomeFragment())
+            }
+
+            AppScreen.MyAds -> {
+                showFragment(MyAdsFragment())
+            }
+
+            AppScreen.Login -> {
+                startLoginOptions()
+            }
+
+            null -> {}
         }
     }
 

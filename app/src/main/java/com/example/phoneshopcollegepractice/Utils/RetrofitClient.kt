@@ -1,5 +1,6 @@
-package com.example.phoneshopcollegepractice.Api
+package com.example.phoneshopcollegepractice.Utils
 
+import com.example.phoneshopcollegepractice.Api.AuthApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
