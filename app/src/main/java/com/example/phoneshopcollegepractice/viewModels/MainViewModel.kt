@@ -1,11 +1,11 @@
-package com.example.phoneshopcollegepractice.ViewModels
+package com.example.phoneshopcollegepractice.viewModels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.phoneshopcollegepractice.Utils.TokenManager
-import com.example.phoneshopcollegepractice.Utils.UserInfoProvider
+import com.example.phoneshopcollegepractice.utils.TokenManager
+import com.example.phoneshopcollegepractice.utils.UserInfoProvider
 
 
 sealed class NavigationEvent {
@@ -45,9 +45,38 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
     fun onHomeClick() {
         navigateToHome()
     }
+
+    fun onChatsClick() {
+        if (UserInfoProvider.user == null) {
+            _toastMessage.value = "Login Required"
+            _currentScreen.value = AppScreen.Login
+        } else {
+            _currentScreen.value = AppScreen.Chats
+        }
+    }
+
+    fun onMyAdsClick() {
+        if (UserInfoProvider.user == null) {
+            _toastMessage.value = "Login Required"
+            _currentScreen.value = AppScreen.Login
+        } else {
+            _currentScreen.value = AppScreen.MyAds
+        }
+    }
+
+    fun onAccountClick() {
+        if (UserInfoProvider.user == null) {
+            _toastMessage.value = "Login Required"
+            _currentScreen.value = AppScreen.Login
+        } else {
+            _currentScreen.value = AppScreen.Account
+        }
+    }
+
 
     fun login(email: String, password: String) {
         UserInfoProvider.getInstance().loginUser(
@@ -61,6 +90,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         )
     }
+
 
     private fun navigateToHome() {
         _currentScreen.value = AppScreen.Home
@@ -96,13 +126,5 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _toolbarTitle.value = "Account"
     }
 
-    fun onChatsClick() {
-        if (UserInfoProvider.user == null) {
-            _toastMessage.value = "Login Required"
-            _currentScreen.value = AppScreen.Login
-        } else {
-            _currentScreen.value = AppScreen.Chats
-        }
-    }
 
 }

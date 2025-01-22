@@ -1,4 +1,4 @@
-package com.example.phoneshopcollegepractice.Api.models
+package com.example.phoneshopcollegepractice.api.models
 
 data class RegisterRequest(
     val email: String,

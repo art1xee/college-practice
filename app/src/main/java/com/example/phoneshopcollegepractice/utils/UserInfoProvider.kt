@@ -1,8 +1,8 @@
-package com.example.phoneshopcollegepractice.Utils
+package com.example.phoneshopcollegepractice.utils
 
-import com.example.phoneshopcollegepractice.Api.AuthApi
-import com.example.phoneshopcollegepractice.Api.models.LoginRequest
-import com.example.phoneshopcollegepractice.Api.models.LoginResponse
+import com.example.phoneshopcollegepractice.api.AuthApi
+import com.example.phoneshopcollegepractice.api.models.LoginRequest
+import com.example.phoneshopcollegepractice.api.models.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
