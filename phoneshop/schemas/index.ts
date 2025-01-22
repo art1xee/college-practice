@@ -35,3 +35,13 @@ export const NewPasswordSchema = z.object({
          message: "Minimum 6 characters required"
     }),
 });
+
+export const CreateAdSchema = z.object({
+    title: z.string().min(1, "Title is required").max(100),
+    price: z
+      .string()
+      .regex(/^\d+$/, "Price must be a number")
+      .transform((val) => parseFloat(val)),
+    brand: z.string().min(1, "Brand is required"),
+    description: z.string().min(40, "Description must be at least 40 characters"),
+  });
