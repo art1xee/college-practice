@@ -7,6 +7,7 @@ import { ImageGallery } from "@/components/frontend/ImageGallery";
 import { SellerInfo } from "@/components/frontend/SellerInfo";
 import { Button } from "@/components/ui/button";
 import { Flag, Heart } from "lucide-react";
+import LoadingSpinner from "@/components/frontend/loading";
 
 const ProductDetailsPage = () => {
   const { id } = useParams(); // Dynamic route parameter
@@ -33,11 +34,11 @@ const ProductDetailsPage = () => {
   }, [id]);
 
   if (!phone) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   const breadcrumbItems = [
-    { label: "Головна", href: "/shop" },
+    { label: "Головна", href: "/" },
     { label: "Каталог", href: "/catalog" },
     { label: phone.name, href: "#" },
   ];
