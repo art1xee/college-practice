@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { CldImage } from "next-cloudinary"; // Import CldImage
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -10,7 +11,7 @@ interface Phone {
   id: number;
   name: string;
   brand: string;
-  imageUrl: string;
+  imageUrl: string | null; // Allow null values for missing images
   price: number;
   description: string;
 }
@@ -20,20 +21,22 @@ const CatalogPage = () => {
 
   const router = useRouter();
 
-  // Fetch phones from API when the component mounts
   useEffect(() => {
     const fetchPhones = async () => {
-      const response = await fetch("/api/phoneshop");
-      const data = await response.json();
-      setPhones(data);
+      try {
+        const response = await fetch("/api/phoneshop");
+        if (!response.ok) {
+          throw new Error("Failed to fetch phones");
+        }
+        const data = await response.json();
+        setPhones(data);
+      } catch (error) {
+        console.error("Error fetching phones:", error);
+      }
     };
 
     fetchPhones();
   }, []);
-
-  const handleBuyButtonClick = (phoneId: number) => {
-    router.push(`/product-details-${phoneId}`);
-  };
 
   return (
     <div className="container mx-auto px-4 py-6 space-y-8 max-w-4xl">
@@ -41,10 +44,12 @@ const CatalogPage = () => {
       <section className="space-y-6">
         <h2 className="text-2xl font-bold text-left">Каталог брендів</h2>
         <div className="grid grid-cols-3 gap-4">
-          {['Samsung', 'Apple', 'Huawei', 'Vivo', 'Xiaomi', 'Oppo'].map((brand) => (
+          {["Samsung", "Apple", "Huawei", "Vivo", "Xiaomi", "Oppo"].map((brand) => (
             <div
               key={brand}
-              className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${brand === 'Samsung' ? 'bg-blue-500' : brand === 'Apple' ? 'bg-black text-white' : 'bg-gray-500'}`}
+              className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${
+                brand === "Samsung" ? "bg-blue-500" : brand === "Apple" ? "bg-black text-white" : "bg-gray-500"
+              }`}
             >
               <span className="font-medium text-sm">{brand}</span>
             </div>
@@ -62,10 +67,26 @@ const CatalogPage = () => {
           }}
         >
           <CarouselContent className="-ml-4">
-            {phones.map((phone, index) => (
-              <CarouselItem key={index} className="pl-4 basis-1/3">
+            {phones.map((phone) => (
+              <CarouselItem key={phone.id} className="pl-4 basis-1/3">
                 <div className="border rounded-lg shadow-md bg-white p-4 flex flex-col items-center space-y-4">
-                  <div className="h-32 w-full bg-gray-100 rounded-md" style={{ backgroundImage: `url(${phone.imageUrl})`, backgroundSize: 'cover' }} />
+                  {/* Render image with CldImage or fallback */}
+                  {phone.imageUrl ? (
+                    <div className="h-32 w-full">
+                      <CldImage
+                        src={phone.imageUrl}
+                        alt={phone.name}
+                        className="h-full w-full object-cover rounded-md"
+                        width="300"
+                        height="300"
+                        crop="fill"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-32 w-full bg-gray-200 rounded-md flex items-center justify-center">
+                      <span className="text-sm text-gray-500">No Image Available</span>
+                    </div>
+                  )}
                   <h3 className="text-base font-semibold text-center">{phone.name}</h3>
                   <p className="text-gray-500 text-xs">{phone.description}</p>
                   <p className="text-xl font-bold">{phone.price} грн</p>
@@ -94,7 +115,7 @@ const CatalogPage = () => {
       <section className="space-y-6">
         <h2 className="text-2xl font-bold text-left">Найчастіші питання</h2>
         <div className="space-y-4">
-          {['Який сенс життя?', 'Як заробити мільйон?'].map((question, index) => (
+          {["Який сенс життя?", "Як заробити мільйон?"].map((question, index) => (
             <details
               key={index}
               className="border rounded-lg p-4 shadow-md cursor-pointer"

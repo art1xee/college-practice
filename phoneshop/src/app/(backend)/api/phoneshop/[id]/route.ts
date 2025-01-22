@@ -10,8 +10,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
   try {
     const phone = await prisma.phone.findUnique({
       where: { id: Number(id) },
-      include: {
-        user: true, // Include seller information
+      select: {
+        id: true,
+        name: true,
+        brand: true,
+        price: true,
+        description: true,
+        imageUrl: true, // Added imageUrl to the selected fields
+        user: true, // Include seller information if needed
       },
     });
 
