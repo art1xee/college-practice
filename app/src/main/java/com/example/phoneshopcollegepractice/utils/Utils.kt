@@ -1,4 +1,4 @@
-package com.example.phoneshopcollegepractice.Utils
+package com.example.phoneshopcollegepractice.utils
 
 import android.content.Context
 import android.widget.Toast
@@ -13,7 +13,6 @@ object Utils {
     fun getTimestamp(): Long {
         return System.currentTimeMillis()
     }
-
 
 
 }

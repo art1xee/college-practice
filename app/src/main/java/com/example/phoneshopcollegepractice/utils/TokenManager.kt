@@ -1,4 +1,4 @@
-package com.example.phoneshopcollegepractice.Utils
+package com.example.phoneshopcollegepractice.utils
 
 import android.content.Context
 import android.content.SharedPreferences

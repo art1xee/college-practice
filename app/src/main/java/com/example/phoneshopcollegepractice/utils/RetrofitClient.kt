@@ -1,13 +1,13 @@
-package com.example.phoneshopcollegepractice.Utils
+package com.example.phoneshopcollegepractice.utils
 
-import com.example.phoneshopcollegepractice.Api.AuthApi
+import com.example.phoneshopcollegepractice.api.AuthApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.0.108:3000/"
+    private const val BASE_URL = "http://192.168.0.108:3000/" // <- change URL in future
 
     private val okHttpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
