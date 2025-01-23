@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
+    // Authenticate user
     const session = await auth();
     if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
     const userId = session.user.id; // Get the current user's ID
     const body = await req.json();
 
+    // Validate request body
     if (!body || typeof body !== "object") {
       return NextResponse.json(
         { success: false, error: "Invalid request body" },
@@ -22,22 +24,24 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, brand, price, description } = body;
+    const { name, brand, price, description, imageUrl } = body;
 
     // Validate required fields
-    if (!name || !brand || !price) {
+    if (!name || !brand || !imageUrl) {
       return NextResponse.json(
-        { success: false, error: "Missing required fields" },
+        { success: false, error: "Missing required fields (name, brand, or imageUrl)" },
         { status: 400 }
       );
     }
 
+    // Save product in the database
     const product = await db.phone.create({
       data: {
         name,
         brand,
-        price: parseFloat(price),
-        description: description || "",
+        imageUrl, // Store the image URL
+        price: price ? parseFloat(price) : null, // Handle optional price
+        description: description || null, // Handle optional description
         createdAt: new Date(), // Set current timestamp
         userId, // Assign the current user's ID
       },

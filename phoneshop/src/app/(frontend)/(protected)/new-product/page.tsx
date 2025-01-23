@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -15,12 +15,38 @@ const AdSchema = z.object({
   brand: z.string().min(1, "Brand is required"),
   price: z.string().min(1, "Price is required"),
   description: z.string().optional(),
+  imageUrl: z.string().optional(), // Optional for the form
 });
 
 type AdForm = z.infer<typeof AdSchema>;
 
+const uploadImage = async (file: File): Promise<string | null> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "testing");
+  formData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dckenmeqo");
+
+  try {
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Image upload failed");
+    }
+
+    const data = await response.json();
+    return data.secure_url; // Return the Cloudinary image URL
+  } catch (error) {
+    console.error("Image upload error:", error);
+    return null;
+  }
+};
+
 const CreateAdPage = () => {
   const [isPending, startTransition] = useTransition();
+  const [image, setImage] = useState<File | null>(null);
 
   const form = useForm<AdForm>({
     resolver: zodResolver(AdSchema),
@@ -33,7 +59,17 @@ const CreateAdPage = () => {
   });
 
   const onSubmit = (data: AdForm) => {
-    startTransition(() => {
+    startTransition(async () => {
+      if (image) {
+        const imageUrl = await uploadImage(image);
+        if (!imageUrl) {
+          toast.error("Image upload failed. Please try again.");
+          return;
+        }
+
+        data.imageUrl = imageUrl; // Attach the uploaded image URL to the form data
+      }
+
       fetch("/api/new-product", {
         method: "POST",
         headers: {
@@ -102,6 +138,21 @@ const CreateAdPage = () => {
               {...form.register("description")}
               placeholder="Enter product description"
               className="min-h-[150px]"
+            />
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Product Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setImage(e.target.files[0]);
+                }
+              }}
             />
           </div>
 
