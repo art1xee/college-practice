@@ -6,6 +6,7 @@ import { getUserByID }  from "../data/user";
 import { db } from "./lib/db";
 import authConfig from "./auth.config";
 import { Session } from "inspector/promises";
+import { getAccountByUserId } from "../data/account";
 
 export const {
     handlers: { GET, POST },
@@ -30,6 +31,10 @@ export const {
             // Allow OAuth without email Verification
             if (account?.provider !== "credentials") return true; 
             
+            if (!user.id) {
+                console.error("User ID is undefined");
+                return false;
+            }
             const existingUser = await getUserByID(user.id); // В инете посмотрел решение вроже user.id!, но я не уверен
         
             if (!existingUser?.emailVerified) return false;
@@ -43,13 +48,27 @@ export const {
             if (token.role && session.user) {
                 session.user.role = token.role as UserRole;
             }
+            if (session.user) {
+                session.user.name = token.name;
+                session.user.email = token.email ?? session.user.email; 
+                session.user.isOAuth = token.isOAuth as boolean;
+            }
             return session;
         },
         async jwt ({ token }) { 
             if (!token.sub) return token;
             const existingUser = await getUserByID(token.sub)
             if (!existingUser) return token;
+
+            const existingAccount = await getAccountByUserId(
+                existingUser.id
+            );
+
+            token.isOAuth = !!existingAccount;
+            token.name = existingUser.name;
+            token.email = existingUser.email;
             token.role = existingUser.role;
+            
             return token;
         }
 
