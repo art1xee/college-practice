@@ -45,8 +45,8 @@ export const RegisterForm = () => {
 
     return (
         <CardWrapper 
-        headerLabel="Create an account"
-        backButtonLabel="Already have an account?"
+        headerLabel="Створіть обліковий запис"
+        backButtonLabel="Вже маєте обліковий запис?"
         backButtonHref="/login"
         showSocial
         >
@@ -61,7 +61,7 @@ export const RegisterForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Name
+                                    Ім'я
                                 </FormLabel>
                                 <FormControl>
                                     <Input 
@@ -81,7 +81,7 @@ export const RegisterForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Email
+                                    Електронна адреса
                                 </FormLabel>
                                 <FormControl>
                                     <Input 
@@ -101,7 +101,7 @@ export const RegisterForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Password
+                                    Пароль
                                 </FormLabel>
                                 <FormControl>
                                     <Input 
@@ -125,7 +125,7 @@ export const RegisterForm = () => {
                     className="w-full"
                     variant="default"
                     >
-                        Register
+                        Регістрація
                     </Button>  
                 </form>
             </Form>
