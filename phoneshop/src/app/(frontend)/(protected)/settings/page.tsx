@@ -12,7 +12,7 @@ const SettingsPage: React.FC = async () => {
                 <div className="container mx-auto px-4 flex justify-between items-center">
                     <h1 className="text-lg font-bold">Налаштування</h1>
                     <nav className="flex space-x-8 text-gray-700 text-lg">
-                        <a href="/announcement" className="hover:underline ">Оголошення</a>
+                        <a href="/my-announcements" className="hover:underline ">Оголошення</a>
                         <a href="#" className="hover:underline">Чат</a>
                         <a href="/profile" className="hover:underline ">Профіль</a>
                         <a href="/settings" className="hover:underline border-b-2 border-blue-500">Налаштування</a>

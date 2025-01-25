@@ -11,7 +11,7 @@ const Footer: React.FC = () => {
           <ul className="space-y-2">
             <li><a href="/catalog" className="hover:underline">Каталог</a></li>
             <li><a href="/profile" className="hover:underline">Профіль</a></li>
-            <li><a href="/announcements" className="hover:underline">Оголошення</a></li>
+            <li><a href="/my-announcements" className="hover:underline">Мої оголошення</a></li>
             <li><a href="/chat" className="hover:underline">Чат</a></li>
             <li><a href="/settings" className="hover:underline">Налаштування</a></li>
           </ul>
