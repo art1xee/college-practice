@@ -1,221 +1,68 @@
-"use client";
 
-import { logout } from "../../../../../actions/logout";
+import React from "react";
+import { auth, signOut } from "@/auth";
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState } from "react";
-import { useSession } from "next-auth/react";
-import { UserRole } from "@prisma/client";
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { SettingsSchema } from "../../../../../schemas";
-import {
-    Card,
-    CardHeader,
-    CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { settings } from "../../../../../actions/settings";
-import {
-    Form,
-    FormField,
-    FormControl,
-    FormItem,
-    FormLabel,
-    FormDescription,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useCurrentUser } from "../../../../../hooks/use-current-user";
-import { FormSuccess } from "@/components/form-success";
-import { FormError } from "@/components/form-error";
-
-const SettingsPage = () => {
-    const user = useCurrentUser(); 
-
-    const [error, setError] = useState<string | undefined>();
-    const [success, setSuccess] = useState<string | undefined>();
-    const { update } = useSession();
-    const [isPending, startTransition] = useTransition();
-
-    const form = useForm<z.infer<typeof SettingsSchema>>({
-        resolver: zodResolver(SettingsSchema),
-        defaultValues: {
-            name: user?.name || undefined,
-            email: user?.email || undefined,
-            password: undefined,
-            newPassword: undefined,
-            role: user?.role || undefined,
-        }
-    });
-
-    const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
-        startTransition(() => {
-            settings(values)
-             .then((data) => {
-                if (data && "error" in data) {
-                    setError(data.error);
-                }
-                
-                if (data && "success" in data) {
-                    update()
-                    setSuccess(data.success);
-                }
-             })
-             .catch(() => setError("Something went wrong!"))
-        });
-    }
-    const handleLogout = async () => {
-        await logout();  // Вызов функции logout
-    };
+const SettingsPage: React.FC = async () => {
+    const session = await auth();
 
     return (
-        <Card className="w-[600px]">
-            <CardHeader> 
-                <p className="text-2xl font-semibold text-center">
-                    Settings
-                </p>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form 
-                    className="space-y-6" 
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    >
-                        <div className="space-y-4">
-                         <FormField
-                         control = {form.control}
-                         name = "name"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Name</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="Ryan Gosling"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                         {user?.isOAuth === false && (
-                        <>
-                         <FormField
-                         control = {form.control}
-                         name = "email"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Email</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="RyanGosling@gmail.com"
-                                       type="email"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                          <FormField
-                         control = {form.control}
-                         name = "password"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Password</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="******"
-                                       type="password"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                         <FormField
-                         control = {form.control}
-                         name = "newPassword"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>New Password</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="******"
-                                       type="password"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                        </>
-                        )}
-                         <FormField
-                         control = {form.control}
-                         name = "role"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Role</FormLabel>
-                                 <Select
-                                   disabled={isPending}
-                                   onValueChange={field.onChange}
-                                   defaultValue={field.value}
-                                 >   
-                                  <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a role"/>
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value={UserRole.ADMIN}> 
-                                        Admin
-                                    </SelectItem>
-                                    <SelectItem value={UserRole.USER}> 
-                                        User
-                                    </SelectItem>
-                                  </SelectContent>
-                                 </Select>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                        </div>
-                        <FormError message={error} />
-                        <FormSuccess message={success} />
-                        <Button 
-                            disabled = {isPending}
-                            type="submit"
-                        >
-                            Save
-                        </Button>
-                    </form>
-                </Form>
-                {/* Кнопка выхода */}
-                <div className="mt-4">
-                    <Button onClick={handleLogout} variant="destructive" className="w-full">
-                        Logout
-                    </Button>
+        <div className="min-h-screen bg-blue-100 flex flex-col items-center">
+            {/* Header */}
+            <header className="w-full bg-white py-4 shadow-md">
+                <div className="container mx-auto px-4 flex justify-between items-center">
+                    <h1 className="text-lg font-bold">Налаштування</h1>
+                    <nav className="flex space-x-8 text-gray-700 text-lg">
+                        <a href="/announcement" className="hover:underline ">Оголошення</a>
+                        <a href="#" className="hover:underline">Чат</a>
+                        <a href="/profile" className="hover:underline ">Профіль</a>
+                        <a href="/settings" className="hover:underline border-b-2 border-blue-500">Налаштування</a>
+                     </nav>
                 </div>
-            </CardContent>
-        </Card>
-    )
-        
-}
+            </header>
+
+            {/* Main content */}
+            <main className="container mx-auto px-4 mt-8">
+                <div className="grid grid-cols-3 gap-4">
+                    {[
+                        { label: "Мова інтерфейсу", options: ["Українська", "Англійська", "Російська"] },
+                        { label: "Тема сайту", options: ["Світла", "Темна", "Системна"] },
+                        { label: "Сповіщення", options: ["Увімкнено", "Вимкнено"] },
+                        { label: "Показ контактів", options: ["Усім", "Лише друзям", "Нікому"] },
+                        { label: "Приватність профілю", options: ["Відкрита", "Закрита"] },
+                        { label: "Часовий пояс", options: ["GMT+2", "GMT+3", "GMT+1"] }
+                    ].map((setting, index) => (
+                        <div key={index} className="bg-white shadow rounded p-4">
+                            <label htmlFor={`setting-${index}`} className="block text-sm font-medium text-gray-700 mb-2">
+                                {setting.label}
+                            </label>
+                            <select
+                                id={`setting-${index}`}
+                                className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            >
+                                {setting.options.map((option, idx) => (
+                                    <option key={idx} value={option}>{option}</option>
+                                ))}
+                            </select>
+                        </div>
+                    ))}
+                </div>
+                <form
+                    action={async () => {
+                        "use server";
+                        await signOut();
+                    }}
+                    className="mt-8"
+                >
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-orange-500 text-white"
+                    >
+                        Sign Out
+                    </button>
+                </form>
+            </main>
+        </div>
+    );
+};
 
 export default SettingsPage;
