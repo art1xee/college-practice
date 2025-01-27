@@ -1,221 +1,169 @@
 "use client";
 
-import { logout } from "../../../../../actions/logout";
-
-import * as z from "zod";
+import React, { useState } from "react";
+import NavigationBar from "@/components/frontend/NavigationBar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Form, FormField, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition, useState } from "react";
-import { useSession } from "next-auth/react";
-import { UserRole } from "@prisma/client";
-
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import * as z from "zod";
 import { SettingsSchema } from "../../../../../schemas";
-import {
-    Card,
-    CardHeader,
-    CardContent,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { settings } from "../../../../../actions/settings";
-import {
-    Form,
-    FormField,
-    FormControl,
-    FormItem,
-    FormLabel,
-    FormDescription,
-    FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useCurrentUser } from "../../../../../hooks/use-current-user";
-import { FormSuccess } from "@/components/form-success";
+import { logout } from "../../../../../actions/logout";
 import { FormError } from "@/components/form-error";
+import { FormSuccess } from "@/components/form-success";
+import { useCurrentUser } from "../../../../../hooks/use-current-user";
 
-const ProfileEditPage = () => {
-    const user = useCurrentUser(); 
+const ProfileEditPage: React.FC = () => {
+  const user = useCurrentUser();
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
+  const [isPending, setIsPending] = useState(false);
 
-    const [error, setError] = useState<string | undefined>();
-    const [success, setSuccess] = useState<string | undefined>();
-    const { update } = useSession();
-    const [isPending, startTransition] = useTransition();
+  const form = useForm<z.infer<typeof SettingsSchema>>({
+    resolver: zodResolver(SettingsSchema),
+    defaultValues: {
+      name: user?.name || undefined,
+      email: user?.email || undefined,
+      password: undefined,
+      newPassword: undefined,
+      role: user?.role || undefined,
+    },
+  });
 
-    const form = useForm<z.infer<typeof SettingsSchema>>({
-        resolver: zodResolver(SettingsSchema),
-        defaultValues: {
-            name: user?.name || undefined,
-            email: user?.email || undefined,
-            password: undefined,
-            newPassword: undefined,
-            role: user?.role || undefined,
-        }
-    });
-
-    const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
-        startTransition(() => {
-            settings(values)
-             .then((data) => {
-                if (data && "error" in data) {
-                    setError(data.error);
-                }
-                
-                if (data && "success" in data) {
-                    update()
-                    setSuccess(data.success);
-                }
-             })
-             .catch(() => setError("Something went wrong!"))
-        });
+  const onSubmit = async (values: z.infer<typeof SettingsSchema>) => {
+    setIsPending(true);
+    try {
+      const result = await settings(values);
+      if (result && "error" in result) {
+        setError(result.error);
+      } else if (result && "success" in result) {
+        setSuccess(result.success);
+      }
+    } catch {
+      setError("Something went wrong.");
+    } finally {
+      setIsPending(false);
     }
-    const handleLogout = async () => {
-        await logout();  // Вызов функции logout
-    };
+  };
 
-    return (
-        <Card className="w-[600px]">
-            <CardHeader> 
-                <p className="text-2xl font-semibold text-center">
-                    Settings
-                </p>
-            </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form 
-                    className="space-y-6" 
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    >
-                        <div className="space-y-4">
-                         <FormField
-                         control = {form.control}
-                         name = "name"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Name</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="Ryan Gosling"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                         {user?.isOAuth === false && (
-                        <>
-                         <FormField
-                         control = {form.control}
-                         name = "email"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Email</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="RyanGosling@gmail.com"
-                                       type="email"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                          <FormField
-                         control = {form.control}
-                         name = "password"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Password</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="******"
-                                       type="password"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                         <FormField
-                         control = {form.control}
-                         name = "newPassword"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>New Password</FormLabel>
-                                 <FormControl>
-                                     <Input
-                                       {...field}
-                                       placeholder="******"
-                                       type="password"
-                                       disabled={isPending}
-                                     />
-                                 </FormControl>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                        </>
-                        )}
-                         <FormField
-                         control = {form.control}
-                         name = "role"
-                         render={({ field }) => (
-                             <FormItem>
-                                 <FormLabel>Role</FormLabel>
-                                 <Select
-                                   disabled={isPending}
-                                   onValueChange={field.onChange}
-                                   defaultValue={field.value}
-                                 >   
-                                  <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a role"/>
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value={UserRole.ADMIN}> 
-                                        Admin
-                                    </SelectItem>
-                                    <SelectItem value={UserRole.USER}> 
-                                        User
-                                    </SelectItem>
-                                  </SelectContent>
-                                 </Select>
-                                 <FormMessage />
-                             </FormItem>
-                            )} 
-                         />
-                        </div>
-                        <FormError message={error} />
-                        <FormSuccess message={success} />
-                        <Button 
-                            disabled = {isPending}
-                            type="submit"
-                        >
-                            Save
-                        </Button>
-                    </form>
-                </Form>
-                {/* Кнопка выхода */}
-                <div className="mt-4">
-                    <Button onClick={handleLogout} variant="destructive" className="w-full">
-                        Logout
-                    </Button>
+  const handleLogout = async () => {
+    await logout();
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-blue-100">
+      {/* Navigation Bar */}
+      <NavigationBar />
+
+      {/* Main Content */}
+      <main className="flex-1 bg-blue-200 pt-4">
+        <div className="max-w-3xl mx-auto pb-6">
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-20 h-20 bg-orange-500 text-white flex items-center justify-center rounded-full text-2xl font-bold">
+              <span>{user?.name?.[0]?.toUpperCase() || "U"}</span>
+            </div>
+            <div>
+              <h2 className="text-xl font-medium text-gray-900">Редагування профілю</h2>
+              <button className="text-blue-600 text-sm hover:underline">+ додати фото</button>
+            </div>
+          </div>
+
+          {/* Profile Form */}
+          <div className="bg-white p-8 rounded-lg shadow-md">
+            <h3 className="text-xl font-bold text-gray-700 mb-4">ОСНОВНА ІНФОРМАЦІЯ</h3>
+            <Form {...form}>
+              <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ім’я</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Ваше ім’я" disabled={isPending} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Електронна адреса</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="example@mail.com" disabled={isPending} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Новий пароль</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Введіть новий пароль"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="newPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Підтвердіть новий пароль</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="password"
+                          placeholder="Підтвердження паролю"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormError message={error} />
+                <FormSuccess message={success} />
+                <div className="py-3 flex justify-end">
+                  <Button type="submit" variant="default" className="bg-orange-500 text-white">
+                    Зберегти
+                  </Button>
                 </div>
-            </CardContent>
-        </Card>
-    )
-        
-}
+              </form>
+            </Form>
+          </div>
+
+          {/* Logout Button */}
+          <div className="mt-6">
+            <Button
+              variant="destructive"
+              className="bg-red-500 text-white w-full"
+              onClick={handleLogout}
+              disabled={isPending}
+            >
+              Вийти
+            </Button>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
 
 export default ProfileEditPage;
