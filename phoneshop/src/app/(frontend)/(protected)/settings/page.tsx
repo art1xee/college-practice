@@ -57,7 +57,7 @@ const SettingsPage: React.FC = async () => {
                         type="submit"
                         className="px-4 py-2 bg-orange-500 text-white"
                     >
-                        Sign Out
+                        Вийти з аккаунту
                     </button>
                 </form>
             </main>

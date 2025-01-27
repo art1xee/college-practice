@@ -50,8 +50,8 @@ export const LoginForm = () => {
 
     return (
         <CardWrapper 
-        headerLabel="Welcome back!"
-        backButtonLabel="Don't have an account?"
+        headerLabel="З поверненням!"
+        backButtonLabel="Не маєте акаунта?"
         backButtonHref="/register"
         showSocial
         >
@@ -66,7 +66,7 @@ export const LoginForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Email
+                                    Електронна адреса
                                 </FormLabel>
                                 <FormControl>
                                     <Input 
@@ -86,7 +86,7 @@ export const LoginForm = () => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Password
+                                    Пароль
                                 </FormLabel>
                                 <FormControl>
                                     <Input 
@@ -98,7 +98,7 @@ export const LoginForm = () => {
                                 </FormControl>
                                 <Button variant="link" size="sm" asChild className="px-0 font-normal text-black">
                                     <Link href="/reset">
-                                        Forgot password?
+                                        Забули пароль?
                                     </Link>
                                 </Button>
                                 <FormMessage />
@@ -114,7 +114,7 @@ export const LoginForm = () => {
                     className="w-full"
                     variant="default"
                     >
-                        Login
+                        Логін
                     </Button>  
                 </form>
             </Form>
