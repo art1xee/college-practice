@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doAfterTextChanged
 import com.example.phoneshopcollegepractice.utils.Utils
 import com.example.phoneshopcollegepractice.databinding.ActivityLoginEmailBinding
 import com.example.phoneshopcollegepractice.viewModels.LoginEmailState
@@ -16,9 +17,6 @@ import com.example.phoneshopcollegepractice.viewModels.LoginEmailViewModel
 class LoginEmailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginEmailBinding
     private lateinit var progressDialog: ProgressDialog
-    private companion object {
-        private const val TAG = "LOGIN_TAG"
-    }
     private val viewModel: LoginEmailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,14 +26,16 @@ class LoginEmailActivity : AppCompatActivity() {
         binding = ActivityLoginEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Initialize progress dialog
+        setupProgressDialog()
+        setupObservers()
+        setupClickListeners()
+    }
+
+    private fun setupProgressDialog() {
         progressDialog = ProgressDialog(this).apply {
             setTitle("Please wait...")
             setCanceledOnTouchOutside(false)
         }
-
-        setupObservers()
-        setupClickListener()
     }
 
     private fun setupObservers() {
@@ -47,17 +47,8 @@ class LoginEmailActivity : AppCompatActivity() {
                     progressDialog.dismiss()
                     Utils.toast(this, state.message)
                 }
-
                 LoginEmailState.Initial -> progressDialog.dismiss()
             }
-        }
-
-        viewModel.emailError.observe(this) { e ->
-            binding.emailEt.error = e
-        }
-
-        viewModel.passwordError.observe(this) { e ->
-            binding.passwordEt.error = e
         }
 
         viewModel.navigateToMain.observe(this) { shouldNavigate ->
@@ -69,36 +60,23 @@ class LoginEmailActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupClickListener() {
-        binding.toolbarBackBtn.setOnClickListener {
-            onBackPressed()
-        }
+    private fun setupClickListeners() {
+        binding.apply {
+            toolbarBackBtn.setOnClickListener { onBackPressed() }
 
-        binding.noAccountTv.setOnClickListener {
-            startActivity(Intent(this, RegisterEmailActivity::class.java))
-        }
-
-        binding.loginBtn.setOnClickListener {
-            viewModel.onLoginClick()
-        }
-
-        binding.emailEt.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.onEmailChanged(s?.toString() ?: "")
+            noAccountTv.setOnClickListener {
+                startActivity(Intent(this@LoginEmailActivity, RegisterEmailActivity::class.java))
             }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
+            loginBtn.setOnClickListener { viewModel.onLoginClick() }
 
-        binding.passwordEt.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.onPasswordChanged(s?.toString() ?: "")
+            emailEt.doAfterTextChanged {
+                viewModel.onEmailChanged(it.toString())
             }
 
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
+            passwordEt.doAfterTextChanged {
+                viewModel.onPasswordChanged(it.toString())
+            }
+        }
     }
 }

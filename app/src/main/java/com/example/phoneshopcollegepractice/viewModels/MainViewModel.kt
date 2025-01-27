@@ -25,6 +25,8 @@ sealed interface AppScreen {
 }
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
+    private val tokenManager = TokenManager(application)
+    private val userInfoProvider = UserInfoProvider(tokenManager)
 
     private val _currentScreen = MutableLiveData<AppScreen>()
     val currentScreen: LiveData<AppScreen> = _currentScreen
@@ -35,62 +37,47 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _toastMessage = MutableLiveData<String>()
     val toastMessage: LiveData<String> = _toastMessage
 
-
     init {
-        // Установить начальный экран
-        if (!TokenManager.isLoggedIn(application)) {
-            onNavigationEvent(NavigationEvent.Login)
+        if (!tokenManager.isLoggedIn()) {
+            navigateToLogin()
         } else {
             navigateToHome()
         }
     }
 
-
-    fun onHomeClick() {
-        navigateToHome()
-    }
-
-    fun onChatsClick() {
-        if (UserInfoProvider.user == null) {
+    private fun requireAuth(action: () -> Unit) {
+        if (tokenManager.isLoggedIn()) {
+            action()
+        } else {
             _toastMessage.value = "Login Required"
             _currentScreen.value = AppScreen.Login
-        } else {
-            _currentScreen.value = AppScreen.Chats
         }
     }
 
-    fun onMyAdsClick() {
-        if (UserInfoProvider.user == null) {
-            _toastMessage.value = "Login Required"
-            _currentScreen.value = AppScreen.Login
-        } else {
-            _currentScreen.value = AppScreen.MyAds
-        }
+    fun onHomeClick() = navigateToHome()
+    fun onChatsClick() = requireAuth {
+        _currentScreen.value = AppScreen.Chats
+        _toolbarTitle.value = "Chats"
     }
-
-    fun onAccountClick() {
-        if (UserInfoProvider.user == null) {
-            _toastMessage.value = "Login Required"
-            _currentScreen.value = AppScreen.Login
-        } else {
-            _currentScreen.value = AppScreen.Account
-        }
+    fun onMyAdsClick() = requireAuth {
+        _currentScreen.value = AppScreen.MyAds
+        _toolbarTitle.value = "My Ads"
     }
-
+    fun onAccountClick() = requireAuth {
+        _currentScreen.value = AppScreen.Account
+        _toolbarTitle.value = "Account"
+    }
 
     fun login(email: String, password: String) {
-        UserInfoProvider.getInstance().loginUser(
+        userInfoProvider.login(
             email,
             password,
-            onSuccess = {
-                navigateToHome()
-            },
-            onFailure = { e ->
-                _toastMessage.value = e
+            onSuccess = { navigateToHome() },
+            onError = { errorMessage ->
+                _toastMessage.value = errorMessage
             }
         )
     }
-
 
     private fun navigateToHome() {
         _currentScreen.value = AppScreen.Home
@@ -101,30 +88,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _currentScreen.value = AppScreen.Login
     }
 
-    private fun onNavigationEvent(event: NavigationEvent) {
+    fun onNavigationEvent(event: NavigationEvent) {
         when (event) {
             NavigationEvent.Home -> navigateToHome()
-            NavigationEvent.Chats -> navigateToChats()
-            NavigationEvent.MyAds -> navigateToMyAds()
-            NavigationEvent.Account -> navigateToAccount()
+            NavigationEvent.Chats -> onChatsClick()
+            NavigationEvent.MyAds -> onMyAdsClick()
+            NavigationEvent.Account -> onAccountClick()
             NavigationEvent.Login -> navigateToLogin()
         }
     }
-
-    private fun navigateToChats() {
-        _currentScreen.value = AppScreen.Chats
-        _toolbarTitle.value = "Chats"
-    }
-
-    private fun navigateToMyAds() {
-        _currentScreen.value = AppScreen.MyAds
-        _toolbarTitle.value = "My Ads"
-    }
-
-    private fun navigateToAccount() {
-        _currentScreen.value = AppScreen.Account
-        _toolbarTitle.value = "Account"
-    }
-
-
 }

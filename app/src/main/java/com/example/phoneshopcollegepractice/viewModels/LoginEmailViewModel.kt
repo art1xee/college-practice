@@ -28,8 +28,8 @@ class LoginEmailViewModel(application: Application) : AndroidViewModel(applicati
     private val _navigateToMain = MutableLiveData<Boolean>()
     val navigateToMain: LiveData<Boolean> = _navigateToMain
 
-    private var emailError: String? = null
-    private var passwordError: String? = null
+     private var emailError: String? = null
+     private var passwordError: String? = null
 
 
     init {
