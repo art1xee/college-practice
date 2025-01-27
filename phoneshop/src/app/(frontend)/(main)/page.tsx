@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { CldImage } from "next-cloudinary"; // Import CldImage
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "next/link"; // Import Link for navigation
 
 interface Phone {
   id: number;
@@ -18,8 +17,6 @@ interface Phone {
 
 const CatalogPage = () => {
   const [phones, setPhones] = useState<Phone[]>([]);
-
-  const router = useRouter();
 
   useEffect(() => {
     const fetchPhones = async () => {
@@ -45,21 +42,27 @@ const CatalogPage = () => {
         <h2 className="text-2xl font-bold text-left">Каталог брендів</h2>
         <div className="grid grid-cols-3 gap-4">
           {["Samsung", "Apple", "Huawei", "Vivo", "Xiaomi", "Oppo"].map((brand) => (
-            <div
-              key={brand}
-              className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${
-                brand === "Samsung" ? "bg-blue-500" : brand === "Apple" ? "bg-black text-white" : "bg-gray-500"
-              }`}
-            >
-              <span className="font-medium text-sm">{brand}</span>
-            </div>
+            <Link key={brand} href="/catalog" passHref>
+              <div
+                className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${
+                  brand === "Samsung" ? "bg-blue-500" : brand === "Apple" ? "bg-black text-white" : "bg-gray-500"
+                }`}
+              >
+                <span className="font-medium text-sm">{brand}</span>
+              </div>
+            </Link>
           ))}
         </div>
       </section>
 
       {/* Товари Тижня */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-bold text-left">Товари Тижня</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-left">Товари Тижня</h2>
+          <Link className="text-2xl font-bold hover:text-gray-600" href="/catalog" passHref>
+            Усі товари
+          </Link>
+        </div>
         <Carousel
           opts={{
             align: "start",
@@ -88,7 +91,6 @@ const CatalogPage = () => {
                     </div>
                   )}
                   <h3 className="text-base font-semibold text-center">{phone.name}</h3>
-                  <p className="text-gray-500 text-xs">{phone.description}</p>
                   <p className="text-xl font-bold">{phone.price} грн</p>
                   <Link href={`/product-details/${phone.id}`} passHref>
                     <Button variant="default">Купити</Button>
