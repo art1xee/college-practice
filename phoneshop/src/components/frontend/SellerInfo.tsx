@@ -16,12 +16,6 @@ interface SellerInfoProps {
           <h3 className="font-medium">{name}</h3>
           <p className="text-sm text-gray-500">На сайті з {joinDate}</p>
         </div>
-        <a
-          href="#"
-          className="ml-auto text-sm text-blue-600 hover:underline"
-        >
-          Всі оголошення автора
-        </a>
       </div>
     );
   };

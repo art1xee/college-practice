@@ -44,6 +44,15 @@ const ProductDetailsPage = () => {
   ];
 
   const productImages = phone.imageUrl ? [phone.imageUrl] : ["/default-image.png"];
+   const formatDate = (date: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",  // Corrected type
+      month: "2-digit", // Corrected type
+      day: "2-digit",   // Corrected type
+    };
+  
+    return new Date(date).toLocaleDateString("uk-UA", options); // Locale for Ukrainian date format
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -67,20 +76,20 @@ const ProductDetailsPage = () => {
 
             <SellerInfo
               name={phone.user.name || "Невідомий продавець"}
-              joinDate={new Date(phone.user.createdAt).getFullYear().toString()}
+              joinDate={formatDate(phone.user.emailVerified || "")}
               avatar={phone.user.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=Default"}
             />
 
             <div>
               <h2 className="text-xl font-semibold mb-4">Опис/характеристики</h2>
-              <p className="text-gray-700">
+              <p className="text-gray-700 break-words">
                 {phone.description || "Опис не доступний"}
               </p>
             </div>
 
             <div className="flex items-center justify-between border-t pt-6">
               <p className="text-sm text-gray-500">
-                Опубліковано {new Date(phone.createdAt).toLocaleDateString()}
+                Опубліковано {formatDate(phone.createdAt || "")}
               </p>
               <div className="flex space-x-4">
                 <Button variant="outline" size="sm">

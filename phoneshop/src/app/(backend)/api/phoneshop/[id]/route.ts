@@ -15,6 +15,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
         name: true,
         brand: true,
         price: true,
+        createdAt: true,
         description: true,
         imageUrl: true, // Added imageUrl to the selected fields
         user: true, // Include seller information if needed
