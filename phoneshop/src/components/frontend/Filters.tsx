@@ -43,6 +43,9 @@ import {
                 <SelectItem value="samsung">Samsung</SelectItem>
                 <SelectItem value="apple">Apple</SelectItem>
                 <SelectItem value="xiaomi">Xiaomi</SelectItem>
+                <SelectItem value="vivo">Vivo</SelectItem>
+                <SelectItem value="huawei">Huawei</SelectItem>
+                <SelectItem value="oppo">Oppo</SelectItem>
               </SelectContent>
             </Select>
           </div>
