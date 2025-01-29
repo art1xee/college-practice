@@ -41,14 +41,25 @@ const CatalogPage = () => {
       <section className="space-y-6">
         <h2 className="text-2xl font-bold text-left">Каталог брендів</h2>
         <div className="grid grid-cols-3 gap-4">
-          {["Samsung", "Apple", "Huawei", "Vivo", "Xiaomi", "Oppo"].map((brand) => (
-            <Link key={brand} href="/catalog" passHref>
+          {[ 
+            { name: "Samsung", color: "bg-blue-500", imageUrl: "https://logospng.org/wp-content/uploads/samsung.jpg", link: "/catalog?brand=Samsung" },
+            { name: "Apple", color: "bg-black text-white", imageUrl: "/images/apple.png", link: "/catalog?brand=Apple" },
+            { name: "Huawei", color: "bg-white border border-gray-300 text-red-600", imageUrl: "/images/huawei.png", link: "/catalog?brand=Huawei" },
+            { name: "Vivo", color: "bg-blue-400", imageUrl: "/images/vivo.png", link: "/catalog?brand=Vivo" },
+            { name: "Xiaomi", color: "bg-orange-500", imageUrl: "/images/xiaomi.png", link: "/catalog?brand=Xiaomi" },
+            { name: "Oppo", color: "bg-green-500", imageUrl: "/images/oppo.png", link: "/catalog?brand=Oppo" }
+          ].map((brand) => (
+            <Link key={brand.name} href={brand.link} passHref>
               <div
-                className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${
-                  brand === "Samsung" ? "bg-blue-500" : brand === "Apple" ? "bg-black text-white" : "bg-gray-500"
-                }`}
+                className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${brand.color}`}
               >
-                <span className="font-medium text-sm">{brand}</span>
+                <CldImage
+                  src={brand.imageUrl}
+                  alt={brand.name}
+                  className="h-8 w-8 object-contain"
+                  width="32"
+                  height="32"
+                />
               </div>
             </Link>
           ))}
@@ -117,13 +128,17 @@ const CatalogPage = () => {
       <section className="space-y-6">
         <h2 className="text-2xl font-bold text-left">Найчастіші питання</h2>
         <div className="space-y-4">
-          {["Який сенс життя?", "Як заробити мільйон?"].map((question, index) => (
+          {[ "Який сенс життя?", "Як заробити мільйон?" ].map((question, index) => (
             <details
               key={index}
               className="border rounded-lg p-4 shadow-md cursor-pointer"
             >
-              <summary className="text-base font-medium text-gray-800">{question}</summary>
-              <p className="mt-2 text-sm text-gray-600">Тут опис відповіді на це запитання.</p>
+              <summary className="text-base font-medium text-gray-800">
+                {question}
+              </summary>
+              <p className="mt-2 text-sm text-gray-600">
+                Тут опис відповіді на це запитання.
+              </p>
             </details>
           ))}
         </div>

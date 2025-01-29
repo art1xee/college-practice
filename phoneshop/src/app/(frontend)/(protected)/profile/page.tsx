@@ -1,8 +1,9 @@
-"use client"
+"use client" 
 
 import React, { useEffect, useState } from "react";
 import NavigationBar from "@/components/frontend/NavigationBar";
 import { Button } from "@/components/ui/button";
+import LoadingSpinner from "@/components/frontend/loading";
 
 interface User {
   id: string;
@@ -38,7 +39,11 @@ const ProfilePage: React.FC = () => {
   }, []);
 
   if (isLoading) {
-    return <p className="text-center mt-4">Loading...</p>;
+    return (
+      <div className="flex justify-center items-center min-h-screen w-full bg-blue-100">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error) {
@@ -46,13 +51,13 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-blue-100">
+    <div className="flex flex-col min-h-screen w-full bg-blue-100">
       {/* Navigation Bar */}
       <NavigationBar />
 
       {/* Main Content */}
-      <main className="flex-1 bg-blue-200 pt-4">
-        <div className="max-w-3xl mx-auto">
+      <main className="flex-1 w-full bg-blue-200 pt-4 min-h-screen">
+        <div className="max-w-3xl mx-auto w-full">
           <div className="flex items-center gap-4 mb-8">
             {/* Display user's initials */}
             <div className="w-20 h-20 bg-orange-500 text-white flex items-center justify-center rounded-full text-2xl font-bold">
@@ -69,7 +74,7 @@ const ProfilePage: React.FC = () => {
           </div>
 
           {/* Profile Information */}
-          <div className="bg-white p-8 rounded-lg shadow-md">
+          <div className="bg-white p-8 rounded-lg shadow-md w-full">
             <h3 className="text-xl font-bold text-gray-700 mb-4">
               ОСНОВНА ІНФОРМАЦІЯ
             </h3>
