@@ -20,6 +20,7 @@ export async function GET(req: NextRequest) {
         email: true,
         role: true,
         number: true, // Include any additional fields you need
+        image: true,
       },
     });
 

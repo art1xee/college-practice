@@ -14,23 +14,72 @@ import { logout } from "../../../../../actions/logout";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useCurrentUser } from "../../../../../hooks/use-current-user";
+import { useEffect } from "react";
+import UserImage from "@/components/frontend/user-image";
 
 const ProfileEditPage: React.FC = () => {
   const user = useCurrentUser();
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [isPending, setIsPending] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | undefined>(user?.image || undefined); // Для отображения аватарки
+  const [loading, setLoading] = useState(true); // Состояние для отслеживания загрузки
 
   const form = useForm<z.infer<typeof SettingsSchema>>({
     resolver: zodResolver(SettingsSchema),
     defaultValues: {
+      image: user?.image || undefined,
       name: user?.name || undefined,
       email: user?.email || undefined,
       password: undefined,
       newPassword: undefined,
       role: user?.role || undefined,
+      number: user?.number || undefined,
     },
   });
+  useEffect(() => {
+    if (user) {
+      setLoading(false); // Когда user загружен, изменяем состояние загрузки
+    }
+  }, [user]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Пока данные загружаются, показываем индикатор загрузки
+  }
+
+  // Функция загрузки фото
+  const uploadImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "testing");
+    formData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dckenmeqo");
+
+    try {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Image upload failed");
+      }
+
+      const data = await response.json();
+      setImagePreview(data.secure_url); 
+      await settings({ image: data.secure_url });
+      setSuccess("Фото завантажено!");
+    } catch (error) {
+      console.error("Image upload error:", error);
+      setError("Не вдалося завнтажити фото.");
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      uploadImage(file);
+    }
+  };
 
   const onSubmit = async (values: z.infer<typeof SettingsSchema>) => {
     setIsPending(true);
@@ -42,7 +91,7 @@ const ProfileEditPage: React.FC = () => {
         setSuccess(result.success);
       }
     } catch {
-      setError("Something went wrong.");
+      setError("Что-то пошло не так.");
     } finally {
       setIsPending(false);
     }
@@ -62,12 +111,22 @@ const ProfileEditPage: React.FC = () => {
         <div className="max-w-3xl mx-auto pb-6">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-20 h-20 bg-orange-500 text-white flex items-center justify-center rounded-full text-2xl font-bold">
-              <span>{user?.name?.[0]?.toUpperCase() || "U"}</span>
-            </div>
+          <UserImage />
             <div>
               <h2 className="text-xl font-medium text-gray-900">Редагування профілю</h2>
-              <button className="text-blue-600 text-sm hover:underline">+ додати фото</button>
+              <label
+                htmlFor="upload-photo"
+                className="text-blue-600 text-sm hover:underline cursor-pointer"
+              >
+                + додати фото
+              </label>
+              <input
+                id="upload-photo"
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
             </div>
           </div>
 
@@ -131,6 +190,24 @@ const ProfileEditPage: React.FC = () => {
                           {...field}
                           type="password"
                           placeholder="Підтвердження паролю"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Номер телефону</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="Ваш номер телефону"
                           disabled={isPending}
                         />
                       </FormControl>

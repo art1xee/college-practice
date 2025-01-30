@@ -41,7 +41,7 @@ model User {
   emailVerified DateTime? @map("email_verified")
   image         String?
   role          UserRole @default(USER)
-  accounts      Account[]
+  accounts      Account[] 
 
   phones        Phone[]   
  
@@ -57,7 +57,7 @@ model Phone {
   description String?
   createdAt   DateTime @default(now())
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

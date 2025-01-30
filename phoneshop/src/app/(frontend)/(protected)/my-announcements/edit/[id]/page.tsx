@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useParams, useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/frontend/loading";
+import { useSWRConfig } from "swr";
 
 const EditSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -55,6 +56,7 @@ const EditProductPage = () => {
   const [loading, setLoading] = useState(true);
   const { id } = useParams(); // Extract product ID from URL params
   const router = useRouter();
+  const { mutate } = useSWRConfig();
 
   const form = useForm<EditForm>({
     resolver: zodResolver(EditSchema),
@@ -132,6 +134,7 @@ const EditProductPage = () => {
         if (res.status === 204) {
           toast.success("Product updated successfully!");
           router.push("/my-announcements");
+          mutate("/api/catalog"); 
           return;
         }
   

@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 // Handle GET requests to fetch a phone by its ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params;
 
   try {
     const phone = await prisma.phone.findUnique({

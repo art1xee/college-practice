@@ -1,12 +1,11 @@
-"use client";
+"use client"
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import useSWR from "swr";
+import { toast } from "sonner";
 import { ProductCard } from "@/components/frontend/ProductCard";
 import { Filters } from "@/components/frontend/Filters";
-import { toast } from "sonner";
 import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
+import { useState } from "react";
 
 interface Product {
   id: string;
@@ -18,56 +17,34 @@ interface Product {
   createdAt: string;
 }
 
-const Index = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Failed to fetch products");
+  return res.json();
+};
+
+const Catalog = () => {
   const [sortBy, setSortBy] = useState<"date" | "price">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
 
-  const fetchProducts = async () => {
-    try {
-      const queryParams = new URLSearchParams();
+  const queryParams = new URLSearchParams();
+  queryParams.append("sort", sortBy);
+  queryParams.append("order", sortOrder);
 
-      queryParams.append("sort", sortBy);
-      queryParams.append("order", sortOrder);
+  if (selectedBrand !== "all") queryParams.append("brand", selectedBrand);
+  if (priceRange.min) queryParams.append("minPrice", priceRange.min);
+  if (priceRange.max) queryParams.append("maxPrice", priceRange.max);
 
-      if (selectedBrand && selectedBrand !== "all") {
-        queryParams.append("brand", selectedBrand);
-      }
+  const { data: products, error, mutate } = useSWR(`/api/catalog?${queryParams.toString()}`, fetcher, {
+    refreshInterval: 5000, // Auto-revalidate every 5 seconds
+  });
 
-      if (priceRange.min) {
-        queryParams.append("minPrice", priceRange.min);
-      }
-      if (priceRange.max) {
-        queryParams.append("maxPrice", priceRange.max);
-      }
-
-      const res = await fetch(`/api/catalog?${queryParams.toString()}`);
-      if (!res.ok) throw new Error("Failed to fetch products");
-      const data = await res.json();
-      setProducts(data);
-    } catch (error) {
-      console.error(error);
-      toast.error("Не вдалося отримати продукти");
-    }
-  };
-
-  const toggleSort = () => {
-    setSortBy((prevSortBy) => (prevSortBy === "date" ? "price" : "date"));
-  };
-
-  const toggleOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
-  };
-
-  const handleFilterChange = () => {
-    fetchProducts();
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, [sortBy, sortOrder, selectedBrand, priceRange]);
+  if (error) {
+    toast.error("Не вдалося отримати продукти");
+    return <p>Error loading products</p>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,7 +53,7 @@ const Index = () => {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">Оголошення</h1>
             <div className="flex items-center gap-2">
-            <Select value={sortBy} onValueChange={(value: "date" | "price") => setSortBy(value)}>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
                 <SelectTrigger className="w-full">
                   <span>Сортувати за: {sortBy === "date" ? "Дата" : "Ціна"}</span>
                 </SelectTrigger>
@@ -86,7 +63,7 @@ const Index = () => {
                 </SelectContent>
               </Select>
 
-            <Select value={sortOrder} onValueChange={(value: "asc" | "desc") => setSortOrder(value)}>
+              <Select value={sortOrder} onValueChange={(value) => setSortOrder(value)}>
                 <SelectTrigger className="w-full">
                   <span>Порядок: {sortOrder === "asc" ? "За зростанням" : "За спаданням"}</span>
                 </SelectTrigger>
@@ -109,15 +86,15 @@ const Index = () => {
               onBrandChange={setSelectedBrand}
               priceRange={priceRange}
               onPriceRangeChange={setPriceRange}
-              onApplyFilters={handleFilterChange}
+              onApplyFilters={() => mutate()} // Re-fetch on filter change
             />
           </aside>
 
           {/* Products Grid */}
           <div className="flex-1">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.length > 0 ? (
-                products.map((product) => (
+              {products?.length > 0 ? (
+                products.map((product: Product) => (
                   <ProductCard
                     key={product.id}
                     id={product.id}
@@ -138,4 +115,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Catalog;

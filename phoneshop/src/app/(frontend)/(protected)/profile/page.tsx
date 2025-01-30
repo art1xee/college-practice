@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import NavigationBar from "@/components/frontend/NavigationBar";
 import { Button } from "@/components/ui/button";
+import { logout } from "../../../../../actions/logout";
 
 interface User {
   id: string;
@@ -10,6 +11,7 @@ interface User {
   email: string;
   role: string;
   number: string;
+  image: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -37,6 +39,10 @@ const ProfilePage: React.FC = () => {
     fetchUserData();
   }, []);
 
+   const handleLogout = async () => {
+      await logout();
+    };
+
   if (isLoading) {
     return <p className="text-center mt-4">Loading...</p>;
   }
@@ -55,8 +61,18 @@ const ProfilePage: React.FC = () => {
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
             {/* Display user's initials */}
-            <div className="w-20 h-20 bg-orange-500 text-white flex items-center justify-center rounded-full text-2xl font-bold">
-              <span>{user?.name?.[0]?.toUpperCase() || "U"}</span>
+            <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-orange-500">
+            {(user?.image ?? "") ? (
+              <img
+                src={user?.image as string} 
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
+              ) : (
+                 <span className="text-white text-2xl font-bold">
+                 {user?.name?.[0]?.toUpperCase() || "U"} {/* Если нет изображения, выводим первую букву имени */}
+                 </span>
+              )}
             </div>
             <div>
               <h2 className="text-xl font-medium text-gray-900">
@@ -97,13 +113,20 @@ const ProfilePage: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="py-3 flex justify-end">
-              <a href="/profile-edit">
-                <Button variant="default" className="bg-orange-500 text-white">
-                  Редагувати
+              <div className="py-3 flex justify-end space-x-4">
+                <a href="/profile-edit">
+                  <Button variant="default" className="bg-orange-500 text-white">
+                    Редагувати
+                  </Button>
+                </a>
+                <Button
+                  variant="default"
+                  className="bg-orange-500 text-white"
+                  onClick={handleLogout}
+                >
+                  Вийти
                 </Button>
-              </a>
-            </div>
+              </div>
           </div>
         </div>
       </main>

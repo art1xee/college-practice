@@ -3,7 +3,8 @@ export const PublicRoutes = [
     "/catalog",
     "/api/phone/auth/login",
     "/api/phone/auth/register",
-    "/api/phoneshop"
+    "/api/phoneshop",
+    "/api/catalog"
 ];
 
 export const authRoutes = [
@@ -12,6 +13,9 @@ export const authRoutes = [
     "/error",
     "/new-verification",
 ];
+
+export const IdRoutes = "/product-details";
+export const IdRoutesApi = "/api/phoneshop";
 
 export const apiAuthPrefix = "/api/auth";
 
