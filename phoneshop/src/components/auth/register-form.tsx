@@ -25,6 +25,7 @@ export const RegisterForm = () => {
         resolver: zodResolver(RegisterSchema),
         defaultValues: {
             email: "",
+            number: "",
             password: "",
             name: "",
         },
@@ -89,6 +90,26 @@ export const RegisterForm = () => {
                                     disabled={isPending}
                                     placeholder="john.doe@example.com"
                                     type="email"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                        <FormField 
+                        control={form.control}
+                        name="number"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>
+                                    Номер телефону
+                                </FormLabel>
+                                <FormControl>
+                                    <Input 
+                                    {...field}
+                                    disabled={isPending}
+                                    placeholder="415‑555‑0132"
+                                    type="number"
                                     />
                                 </FormControl>
                                 <FormMessage />

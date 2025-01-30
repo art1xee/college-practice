@@ -33,6 +33,7 @@ const ProfileEditPage: React.FC = () => {
       password: undefined,
       newPassword: undefined,
       role: user?.role || undefined,
+      number: user?.number || undefined,
     },
   });
   useEffect(() => {
@@ -201,6 +202,24 @@ const ProfileEditPage: React.FC = () => {
                           {...field}
                           type="password"
                           placeholder="Підтвердження паролю"
+                          disabled={isPending}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Номер телефону</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="Ваш номер телефону"
                           disabled={isPending}
                         />
                       </FormControl>

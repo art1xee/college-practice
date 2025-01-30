@@ -4,6 +4,7 @@ import { UserRole } from "@prisma/client";
 
 export const SettingsSchema = z.object({
     name: z.optional(z.string().min(1)),
+    number: z.optional(z.string().refine(validator.isMobilePhone)),
     role: z.enum([UserRole.ADMIN, UserRole.USER]),
     email: z.optional(z.string().email()),
     password: z.optional(z.string().min(6)),
