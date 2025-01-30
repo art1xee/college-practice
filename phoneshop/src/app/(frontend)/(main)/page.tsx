@@ -41,14 +41,25 @@ const CatalogPage = () => {
       <section className="space-y-6">
         <h2 className="text-2xl font-bold text-left">Каталог брендів</h2>
         <div className="grid grid-cols-3 gap-4">
-          {["Samsung", "Apple", "Huawei", "Vivo", "Xiaomi", "Oppo"].map((brand) => (
-            <Link key={brand} href="/catalog" passHref>
+          {[ 
+            { name: "Samsung",  color: "bg-blue-500",  imageUrl: "https://cdn.worldvectorlogo.com/logos/samsung-8.svg", link: "/catalog?brand=Samsung" },
+            { name: "Apple", color: "bg-gray-200 text-white", imageUrl: "https://cdn.worldvectorlogo.com/logos/apple-11.svg", link: "/catalog?brand=Apple" },
+            { name: "Huawei", color: "bg-white border border-gray-300 text-red-600", imageUrl: "https://cdn.worldvectorlogo.com/logos/huawei-2.svg", link: "/catalog?brand=Huawei" },
+            { name: "Vivo", color: "bg-gray-400", imageUrl: "https://cdn.worldvectorlogo.com/logos/vivo-logo-2019.svg", link: "/catalog?brand=Vivo" },
+            { name: "Xiaomi", color: "bg-orange-500", imageUrl: "https://cdn.worldvectorlogo.com/logos/xiaomi-4.svg", link: "/catalog?brand=Xiaomi" },
+            { name: "Oppo", color: "bg-green-100", imageUrl: "https://www.logo.wine/a/logo/Oppo/Oppo-Logo.wine.svg", link: "/catalog?brand=Oppo" }
+          ].map((brand) => (
+            <Link key={brand.name} href={brand.link} passHref>
               <div
-                className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${
-                  brand === "Samsung" ? "bg-blue-500" : brand === "Apple" ? "bg-black text-white" : "bg-gray-500"
-                }`}
+                className={`flex items-center justify-center h-16 rounded-md shadow-md cursor-pointer hover:opacity-90 ${brand.color}`}
               >
-                <span className="font-medium text-sm">{brand}</span>
+                <img
+                  src={brand.imageUrl}
+                  alt={brand.name}
+                  className="h-24 w-24 object-contain"
+                  width="32"
+                  height="32"
+                />
               </div>
             </Link>
           ))}
@@ -109,25 +120,50 @@ const CatalogPage = () => {
         <h2 className="text-xl font-bold">Відкрийте бізнес разом з BTD</h2>
         <p className="text-gray-600 text-sm">Тут сюди з вашим першим мільйоном</p>
         <div>
+          <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley">
           <Button variant="outline">Дізнатись детальніше</Button>
+          </a>
         </div>
       </section>
 
       {/* Найчастіші питання */}
       <section className="space-y-6">
-        <h2 className="text-2xl font-bold text-left">Найчастіші питання</h2>
-        <div className="space-y-4">
-          {["Який сенс життя?", "Як заробити мільйон?"].map((question, index) => (
-            <details
-              key={index}
-              className="border rounded-lg p-4 shadow-md cursor-pointer"
-            >
-              <summary className="text-base font-medium text-gray-800">{question}</summary>
-              <p className="mt-2 text-sm text-gray-600">Тут опис відповіді на це запитання.</p>
-            </details>
-          ))}
-        </div>
-      </section>
+  <h2 className="text-2xl font-bold text-left">Найчастіші питання</h2>
+  <div className="space-y-4">
+    {[
+      "Який сенс життя?",
+      "Як досягти успіху?",
+    ].map((question, index) => (
+      <details
+        key={index}
+        className="border rounded-lg p-4 shadow-md cursor-pointer"
+      >
+        <summary className="text-base font-medium text-gray-800">
+          {question}
+        </summary>
+        <p className="mt-2 text-sm text-gray-600">
+          {index === 0 ? (
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/p-4jQOl7eO8?si=rYITUgcF_-buZMOb"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            ></iframe>
+          ) : (
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/msEccW-zt_k?si=PtLsMSxesCnPwa29"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            ></iframe>
+          )}
+        </p>
+      </details>
+    ))}
+  </div>
+</section>
     </div>
   );
 };
