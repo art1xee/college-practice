@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from "react";
 import { CldImage } from "next-cloudinary";
 import LoadingSpinner from "@/components/frontend/loading";
+import { useSWRConfig } from "swr";
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { mutate } = useSWRConfig();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -30,14 +32,20 @@ const App: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch(`/api/my-products/${id}`, {
+      const res = await fetch(`/api/my-products`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }), // Send the id in the body
       });
-
+  
       if (res.ok) {
         setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+        mutate("/api/catalog"); 
       } else {
-        console.error("Failed to delete product:", await res.json());
+        const errorData = await res.json();
+        console.error("Failed to delete product:", errorData);
       }
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -53,10 +61,10 @@ const App: React.FC = () => {
       {/* Header */}
       <header className="w-full bg-white shadow-md">
         <div className="container mx-auto px-4 flex justify-between items-center py-4">
-          <h1 className="text-lg font-bold">Оголошення</h1>
+          <h1 className="text-lg font-bold">Мої оголошення</h1>
           <nav className="flex space-x-8 text-gray-700 text-lg">
             <a href="/announcement" className="hover:underline border-b-2 border-blue-500">
-              Оголошення
+              Мої оголошення
             </a>
             <a href="#" className="hover:underline">
               Чат
@@ -107,7 +115,6 @@ const App: React.FC = () => {
                       className="text-gray-500 truncate w-full overflow-hidden"
                       title={phone.description || "No description available"} // Tooltip for full description
                     >
-                      {phone.description || "No description available"}
                     </p>
                     <p className="text-xl font-semibold text-black mt-2">{phone.price?.toLocaleString()} грн</p>
                   </div>
