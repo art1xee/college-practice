@@ -9,6 +9,7 @@ import { FormInput } from "@/components/frontend/FormInput";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSWRConfig } from "swr";
 
 const AdSchema = z.object({
   name: z.string().min(1, "Назва є обов'язковою"),
@@ -47,6 +48,7 @@ const uploadImage = async (file: File): Promise<string | null> => {
 const CreateAdPage = () => {
   const [isPending, startTransition] = useTransition();
   const [image, setImage] = useState<File | null>(null);
+  const { mutate } = useSWRConfig();
 
   const form = useForm<AdForm>({
     resolver: zodResolver(AdSchema),
@@ -68,7 +70,7 @@ const CreateAdPage = () => {
         }
         data.imageUrl = imageUrl;
       }
-
+  
       fetch("/api/new-product", {
         method: "POST",
         headers: {
@@ -86,6 +88,7 @@ const CreateAdPage = () => {
         .then(() => {
           toast.success("Оголошення успішно створено!");
           form.reset();
+          mutate("/api/catalog"); 
         })
         .catch((error) => {
           console.error("Помилка:", error);
@@ -93,6 +96,7 @@ const CreateAdPage = () => {
         });
     });
   };
+  
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
