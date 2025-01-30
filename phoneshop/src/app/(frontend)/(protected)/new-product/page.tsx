@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -12,11 +12,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useSWRConfig } from "swr";
 
 const AdSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  brand: z.string().min(1, "Brand is required"),
-  price: z.string().min(1, "Price is required"),
+  name: z.string().min(1, "Назва є обов'язковою"),
+  brand: z.string().min(1, "Бренд є обов'язковим"),
+  price: z.string().min(1, "Ціна є обов'язковою"),
   description: z.string().optional(),
-  imageUrl: z.string().optional(), // Optional for the form
+  imageUrl: z.string().optional(),
 });
 
 type AdForm = z.infer<typeof AdSchema>;
@@ -34,13 +34,13 @@ const uploadImage = async (file: File): Promise<string | null> => {
     });
 
     if (!response.ok) {
-      throw new Error("Image upload failed");
+      throw new Error("Помилка завантаження зображення");
     }
 
     const data = await response.json();
-    return data.secure_url; // Return the Cloudinary image URL
+    return data.secure_url;
   } catch (error) {
-    console.error("Image upload error:", error);
+    console.error("Помилка завантаження зображення:", error);
     return null;
   }
 };
@@ -65,7 +65,7 @@ const CreateAdPage = () => {
       if (image) {
         const imageUrl = await uploadImage(image);
         if (!imageUrl) {
-          toast.error("Image upload failed. Please try again.");
+          toast.error("Не вдалося завантажити зображення. Спробуйте ще раз.");
           return;
         }
         data.imageUrl = imageUrl;
@@ -81,18 +81,18 @@ const CreateAdPage = () => {
         .then(async (res) => {
           if (!res.ok) {
             const errorData = await res.json();
-            throw new Error(errorData.error || "Failed to create product");
+            throw new Error(errorData.error || "Не вдалося створити оголошення");
           }
           return res.json();
         })
         .then(() => {
-          toast.success("Product created successfully!");
+          toast.success("Оголошення успішно створено!");
           form.reset();
           mutate("/api/catalog"); 
         })
         .catch((error) => {
-          console.error("Error:", error);
-          toast.error(error.message || "Failed to create product.");
+          console.error("Помилка:", error);
+          toast.error(error.message || "Не вдалося створити оголошення.");
         });
     });
   };
@@ -101,30 +101,16 @@ const CreateAdPage = () => {
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-semibold mb-8">Create a Product</h1>
+        <h1 className="text-2xl font-semibold mb-8">Створити оголошення</h1>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="bg-white p-6 rounded-lg shadow-sm space-y-6">
-            <FormInput
-              label="Product Name"
-              {...form.register("name")}
-              placeholder="Enter product name"
-            />
-            <FormInput
-              label="Price"
-              {...form.register("price")}
-              type="number"
-              placeholder="Enter product price"
-            />
+            <FormInput label="Назва товару" {...form.register("name")} placeholder="Введіть назву товару" />
+            <FormInput label="Ціна" {...form.register("price")} type="number" placeholder="Введіть ціну товару" />
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Brand
-              </label>
-              <Select
-                onValueChange={(value) => form.setValue("brand", value)}
-                value={form.watch("brand")}
-              >
+              <label className="block text-sm font-medium text-gray-700">Бренд</label>
+              <Select onValueChange={(value) => form.setValue("brand", value)} value={form.watch("brand")}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a brand" />
+                  <SelectValue placeholder="Оберіть бренд" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Samsung">Samsung</SelectItem>
@@ -139,36 +125,22 @@ const CreateAdPage = () => {
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
-            <h2 className="text-lg font-medium">Description</h2>
-            <Textarea
-              {...form.register("description")}
-              placeholder="Enter product description"
-              className="min-h-[150px]"
-            />
+            <h2 className="text-lg font-medium">Опис</h2>
+            <Textarea {...form.register("description")} placeholder="Введіть опис товару" className="min-h-[150px]" />
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-sm space-y-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Product Image
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  setImage(e.target.files[0]);
-                }
-              }}
-            />
+            <label className="block text-sm font-medium text-gray-700">Зображення товару</label>
+            <input type="file" accept="image/*" onChange={(e) => {
+              if (e.target.files && e.target.files[0]) {
+                setImage(e.target.files[0]);
+              }
+            }} />
           </div>
 
           <div className="flex justify-end space-x-4">
-            <Button variant="outline" type="button">
-              Preview
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              Publish
-            </Button>
+            <Button variant="outline" type="button">Попередній перегляд</Button>
+            <Button type="submit" disabled={isPending}>Опублікувати</Button>
           </div>
         </form>
       </div>
