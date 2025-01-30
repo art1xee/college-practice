@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import NavigationBar from "@/components/frontend/NavigationBar";
 import { Button } from "@/components/ui/button";
+import { logout } from "../../../../../actions/logout";
 
 interface User {
   id: string;
@@ -37,6 +38,10 @@ const ProfilePage: React.FC = () => {
 
     fetchUserData();
   }, []);
+
+   const handleLogout = async () => {
+      await logout();
+    };
 
   if (isLoading) {
     return <p className="text-center mt-4">Loading...</p>;
@@ -108,13 +113,20 @@ const ProfilePage: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="py-3 flex justify-end">
-              <a href="/profile-edit">
-                <Button variant="default" className="bg-orange-500 text-white">
-                  Редагувати
+              <div className="py-3 flex justify-end space-x-4">
+                <a href="/profile-edit">
+                  <Button variant="default" className="bg-orange-500 text-white">
+                    Редагувати
+                  </Button>
+                </a>
+                <Button
+                  variant="default"
+                  className="bg-orange-500 text-white"
+                  onClick={handleLogout}
+                >
+                  Вийти
                 </Button>
-              </a>
-            </div>
+              </div>
           </div>
         </div>
       </main>
