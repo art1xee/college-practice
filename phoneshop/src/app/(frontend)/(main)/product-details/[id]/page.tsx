@@ -8,10 +8,12 @@ import { SellerInfo } from "@/components/frontend/SellerInfo";
 import { Button } from "@/components/ui/button";
 import { Flag, Heart } from "lucide-react";
 import LoadingSpinner from "@/components/frontend/loading";
+import { ContactSeller } from "@/components/frontend/contact-info";
 
 const ProductDetailsPage = () => {
   const { id } = useParams(); // Dynamic route parameter
   const [phone, setPhone] = useState<any>(null);
+  const [showContact, setShowContact] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -32,6 +34,10 @@ const ProductDetailsPage = () => {
       fetchPhone();
     }
   }, [id]);
+
+  const handleContactClick = () => {
+    setShowContact((prev) => !prev);
+  };
 
   if (!phone) {
     return <LoadingSpinner />;
@@ -70,9 +76,20 @@ const ProductDetailsPage = () => {
               </p>
             </div>
 
-            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-lg py-6">
-              Зв'язатися з продавцем
+            <Button 
+              className="w-full bg-orange-500 hover:bg-orange-600 text-lg py-6"
+              onClick={handleContactClick}
+            >
+              {showContact ? "Закрити контакти" : "Зв'язатися з продавцем"}
             </Button>
+
+            {showContact && (
+              <ContactSeller
+                name={phone.user.name || "Невідомий продавець"}
+                email={phone.user.email || "Немає email"}
+                number={phone.user.number || "Немає номера"}
+              />
+            )}
 
             <SellerInfo
               name={phone.user.name || "Невідомий продавець"}

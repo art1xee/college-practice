@@ -15,6 +15,7 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { useCurrentUser } from "../../../../../hooks/use-current-user";
 import { useEffect } from "react";
+import UserImage from "@/components/frontend/user-image";
 
 const ProfileEditPage: React.FC = () => {
   const user = useCurrentUser();
@@ -39,7 +40,6 @@ const ProfileEditPage: React.FC = () => {
   useEffect(() => {
     if (user) {
       setLoading(false); // Когда user загружен, изменяем состояние загрузки
-      console.log("User Image:", user?.image); // Логируем изображение пользователя
     }
   }, [user]);
 
@@ -65,12 +65,12 @@ const ProfileEditPage: React.FC = () => {
       }
 
       const data = await response.json();
-      setImagePreview(data.secure_url); // Устанавливаем предварительный просмотр аватарки
-      await settings({ image: data.secure_url }); // Сохраняем аватарку сразу в базе данных
-      setSuccess("Фото успешно загружено!");
+      setImagePreview(data.secure_url); 
+      await settings({ image: data.secure_url });
+      setSuccess("Фото завантажено!");
     } catch (error) {
       console.error("Image upload error:", error);
-      setError("Не удалось загрузить фото.");
+      setError("Не вдалося завнтажити фото.");
     }
   };
 
@@ -111,19 +111,7 @@ const ProfileEditPage: React.FC = () => {
         <div className="max-w-3xl mx-auto pb-6">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-          <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-orange-500">
-            {imagePreview || (user?.image ?? "") ? (
-              <img
-                src={imagePreview || `${user?.image}?t=${new Date().getTime()}`} // Исправлено с использованием скобок
-                alt="User Avatar"
-                className="w-full h-full object-cover"
-              />
-              ) : (
-                 <span className="text-white text-2xl font-bold">
-                 {user?.name?.[0]?.toUpperCase() || "U"} {/* Если нет изображения, выводим первую букву имени */}
-                 </span>
-              )}
-          </div>
+          <UserImage />
             <div>
               <h2 className="text-xl font-medium text-gray-900">Редагування профілю</h2>
               <label

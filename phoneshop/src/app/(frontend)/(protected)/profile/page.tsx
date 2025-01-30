@@ -10,6 +10,7 @@ interface User {
   email: string;
   role: string;
   number: string;
+  image: string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -55,8 +56,18 @@ const ProfilePage: React.FC = () => {
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
             {/* Display user's initials */}
-            <div className="w-20 h-20 bg-orange-500 text-white flex items-center justify-center rounded-full text-2xl font-bold">
-              <span>{user?.name?.[0]?.toUpperCase() || "U"}</span>
+            <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center bg-orange-500">
+            {(user?.image ?? "") ? (
+              <img
+                src={user?.image as string} 
+                alt="User Avatar"
+                className="w-full h-full object-cover"
+              />
+              ) : (
+                 <span className="text-white text-2xl font-bold">
+                 {user?.name?.[0]?.toUpperCase() || "U"} {/* Если нет изображения, выводим первую букву имени */}
+                 </span>
+              )}
             </div>
             <div>
               <h2 className="text-xl font-medium text-gray-900">
