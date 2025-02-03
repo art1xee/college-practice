@@ -1,6 +1,7 @@
 package com.example.phoneshopcollegepractice.utils
 
 import com.example.phoneshopcollegepractice.api.AuthApi
+import com.example.phoneshopcollegepractice.api.models.GoogleSignInRequest
 import com.example.phoneshopcollegepractice.api.models.LoginRequest
 import com.example.phoneshopcollegepractice.api.models.LoginResponse
 import com.example.phoneshopcollegepractice.api.models.RegisterRequest
@@ -8,6 +9,8 @@ import com.example.phoneshopcollegepractice.api.models.RegisterResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 class UserInfoProvider(private val tokenManager: TokenManager) {
 
@@ -15,7 +18,7 @@ class UserInfoProvider(private val tokenManager: TokenManager) {
         email: String,
         password: String,
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: (String) -> Unit,
     ) {
         val registerRequest = RegisterRequest(
             email = email,
@@ -28,7 +31,7 @@ class UserInfoProvider(private val tokenManager: TokenManager) {
             .enqueue(object : Callback<RegisterResponse> {
                 override fun onResponse(
                     call: Call<RegisterResponse>,
-                    response: Response<RegisterResponse>
+                    response: Response<RegisterResponse>,
                 ) {
                     if (response.isSuccessful) {
                         response.body()?.let { registerResponse ->
@@ -59,14 +62,14 @@ class UserInfoProvider(private val tokenManager: TokenManager) {
         email: String,
         password: String,
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: (String) -> Unit,
     ) {
         val loginRequest = LoginRequest(email, password)
         RetrofitClient.authApi.login(loginRequest)
             .enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(
                     call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
+                    response: Response<LoginResponse>,
                 ) {
                     if (response.isSuccessful) {
                         response.body()?.let { loginResponse ->
@@ -92,4 +95,42 @@ class UserInfoProvider(private val tokenManager: TokenManager) {
                 }
             })
     }
+
+    fun googleSignIn(
+        idToken: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        val googleSignInRequest = GoogleSignInRequest(idToken)
+        RetrofitClient.authApi.googleSignIn(googleSignInRequest)
+            .enqueue(object : Callback<LoginResponse> {
+                override fun onResponse(
+                    call: Call<LoginResponse>,
+                    response: Response<LoginResponse>,
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()?.let { loginResponse ->
+                            loginResponse.token?.let { token ->
+                                tokenManager.saveToken(token)
+                                onSuccess()
+                            } ?: run {
+                                onError("Google Sign-In failed: No token received")
+                            }
+                        }
+                    } else {
+                        val errorMessage = try {
+                            response.errorBody()?.string() ?: "Google Sign-In failed"
+                        } catch (e: Exception) {
+                            "Google Sign-In failed"
+                        }
+                        onError(errorMessage)
+                    }
+                }
+
+                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    onError("Network error: ${t.message}")
+                }
+            })
+    }
 }
+

@@ -1,5 +1,6 @@
 package com.example.phoneshopcollegepractice.api
 
+import com.example.phoneshopcollegepractice.api.models.GoogleSignInRequest
 import com.example.phoneshopcollegepractice.api.models.LoginRequest
 import com.example.phoneshopcollegepractice.api.models.LoginResponse
 import com.example.phoneshopcollegepractice.api.models.RegisterRequest
@@ -14,4 +15,7 @@ interface AuthApi {
 
     @POST("api/phone/auth/register")
     fun register(@Body registerRequest: RegisterRequest): Call<RegisterResponse>
+
+    @POST("api/phone/auth/google") // Adjust this endpoint path to match your backend
+    fun googleSignIn(@Body request: GoogleSignInRequest): Call<LoginResponse>
 }

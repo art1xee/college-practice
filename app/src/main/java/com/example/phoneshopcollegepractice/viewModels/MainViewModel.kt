@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import com.example.phoneshopcollegepractice.utils.TokenManager
 import com.example.phoneshopcollegepractice.utils.UserInfoProvider
 
-
 sealed class NavigationEvent {
     data object Home : NavigationEvent()
     data object Chats : NavigationEvent()
@@ -37,6 +36,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _toastMessage = MutableLiveData<String>()
     val toastMessage: LiveData<String> = _toastMessage
 
+
     init {
         if (!tokenManager.isLoggedIn()) {
             navigateToLogin()
@@ -44,6 +44,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             navigateToHome()
         }
     }
+
 
     private fun requireAuth(action: () -> Unit) {
         if (tokenManager.isLoggedIn()) {
@@ -59,10 +60,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _currentScreen.value = AppScreen.Chats
         _toolbarTitle.value = "Chats"
     }
-    fun onMyAdsClick() = requireAuth {
+
+    fun onMyAdsClick() = requireAuth  {
         _currentScreen.value = AppScreen.MyAds
         _toolbarTitle.value = "My Ads"
     }
+
     fun onAccountClick() = requireAuth {
         _currentScreen.value = AppScreen.Account
         _toolbarTitle.value = "Account"

@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.menu_chats -> {
                     viewModel.onChatsClick()
-                    // Navigate to ChatsFragment when "Chats" menu is selected
+                    // Navigate to ChatsFragment when "Chats" menu is selectedё
                     true
                 }
 

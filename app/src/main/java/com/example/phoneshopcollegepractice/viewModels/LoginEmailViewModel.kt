@@ -28,8 +28,11 @@ class LoginEmailViewModel(application: Application) : AndroidViewModel(applicati
     private val _navigateToMain = MutableLiveData<Boolean>()
     val navigateToMain: LiveData<Boolean> = _navigateToMain
 
-     private var emailError: String? = null
-     private var passwordError: String? = null
+    private val _emailError = MutableLiveData<String?>()
+    val emailError: LiveData<String?> = _emailError
+
+    private val _passwordError = MutableLiveData<String?>()
+    val passwordError: LiveData<String?> = _passwordError
 
 
     init {
@@ -41,10 +44,12 @@ class LoginEmailViewModel(application: Application) : AndroidViewModel(applicati
 
     fun onEmailChanged(email: String) {
         _email.value = email
+        _emailError.value = null
     }
 
     fun onPasswordChanged(password: String) {
         _password.value = password
+        _passwordError.value = null
     }
 
 
@@ -53,8 +58,8 @@ class LoginEmailViewModel(application: Application) : AndroidViewModel(applicati
         val password = _password.value?.trim() ?: ""
 
         //Validate input first
-        emailError = validateEmail(email)
-        passwordError = validatePassword(password)
+        val emailError = validateEmail(email)
+        val passwordError = validatePassword(password)
 
         //Check of there are any validation errors
         if (emailError != null || passwordError != null) {
@@ -66,6 +71,9 @@ class LoginEmailViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     private fun validateEmail(email: String): String? {
+        if (email.isEmpty()) {
+            return "Enter an email"
+        }
         return if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             "Invalid Email format!"
         } else {

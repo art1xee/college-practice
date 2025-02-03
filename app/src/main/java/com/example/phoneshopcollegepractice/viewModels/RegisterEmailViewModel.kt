@@ -30,20 +30,28 @@ class RegisterEmailViewModel(application: Application) : AndroidViewModel(applic
     private val _navigateToMain = MutableLiveData<Boolean>()
     val navigateToMain: LiveData<Boolean> = _navigateToMain
 
-    private var emailError: String? = null
-    private var passwordError: String? = null
-    private var confirmPasswordError: String? = null
+    private val _emailError = MutableLiveData<String?>()
+    val emailError: LiveData<String?> = _emailError
+
+    private val _passwordError = MutableLiveData<String?>()
+    val passwordError: LiveData<String?> = _password
+
+    private val _confirmPasswordError = MutableLiveData<String?>()
+    val confirmPasswordError: LiveData<String?> = _confirmPasswordError
 
     fun onEmailChanged(email: String) {
         _email.value = email
+        _emailError.value = null
     }
 
     fun onPasswordChanged(password: String) {
         _password.value = password
+        _passwordError.value = null
     }
 
     fun onConfirmPasswordChanged(confirmPassword: String) {
         _confirmPassword.value = confirmPassword
+        _confirmPasswordError.value = null
     }
 
 
@@ -52,9 +60,13 @@ class RegisterEmailViewModel(application: Application) : AndroidViewModel(applic
         val password = _password.value?.trim() ?: ""
         val confirmPassword = _confirmPassword.value?.trim() ?: ""
 
-        emailError = validateEmail(email)
-        passwordError = validatePassword(password)
-        confirmPasswordError = validateConfirmPassword(confirmPassword, password)
+        val emailError = validateEmail(email)
+        val passwordError = validatePassword(password)
+        val confirmPasswordError = validateConfirmPassword(confirmPassword, password)
+
+        _emailError.value = emailError
+        _passwordError.value = passwordError
+        _confirmPasswordError.value = confirmPasswordError
 
         if (emailError != null || passwordError != null || confirmPasswordError != null) {
             return
@@ -62,7 +74,11 @@ class RegisterEmailViewModel(application: Application) : AndroidViewModel(applic
         registerUser(email, password)
     }
 
+
     private fun validateEmail(email: String): String? {
+        if (email.isEmpty()) {
+            return "Enter an email"
+        }
         return if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             "Invalid Email Pattern"
         } else {
@@ -79,8 +95,11 @@ class RegisterEmailViewModel(application: Application) : AndroidViewModel(applic
     }
 
     private fun validateConfirmPassword(confirmPassword: String, password: String): String? {
-        return if (confirmPassword.isNotEmpty() && confirmPassword != password) {
-            "Password Does`nt Match"
+        if (confirmPassword.isEmpty()) {
+            return "Confirm your password"
+        }
+        return if (confirmPassword != password) {
+            "Password Doesn't Match"
         } else {
             null
         }
@@ -102,14 +121,7 @@ class RegisterEmailViewModel(application: Application) : AndroidViewModel(applic
         )
     }
 
-
     fun onNavigationToMainComplete() {
         _navigateToMain.value = false
     }
 }
-
-
-
-
-
-
