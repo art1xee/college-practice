@@ -4,7 +4,6 @@ import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
-    // Authenticate user
     const session = await auth();
     if (!session || !session.user || !session.user.id) {
       return NextResponse.json(
@@ -13,20 +12,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const userId = session.user.id; // Get the current user's ID
+    const userId = session.user.id;
     const body = await req.json();
-
-    // Validate request body
-    if (!body || typeof body !== "object") {
-      return NextResponse.json(
-        { success: false, error: "Invalid request body" },
-        { status: 400 }
-      );
-    }
-
     const { name, brand, price, description, imageUrl } = body;
 
-    // Validate required fields
     if (!name || !brand || !imageUrl) {
       return NextResponse.json(
         { success: false, error: "Missing required fields (name, brand, or imageUrl)" },
@@ -34,16 +23,28 @@ export async function POST(req: Request) {
       );
     }
 
-    // Save product in the database
+    // Check the number of existing phone products
+    const userPhoneCount = await db.phone.count({
+      where: { userId },
+    });
+
+    if (userPhoneCount >= 10) {
+      return NextResponse.json(
+        { success: false, error: "You have reached the maximum limit of 10 phone products." },
+        { status: 403 }
+      );
+    }
+
+    // Create the phone product if limit not exceeded
     const product = await db.phone.create({
       data: {
         name,
         brand,
-        imageUrl, // Store the image URL
-        price: price ? parseFloat(price) : null, // Handle optional price
-        description: description || null, // Handle optional description
-        createdAt: new Date(), // Set current timestamp
-        userId, // Assign the current user's ID
+        imageUrl,
+        price: price ? parseFloat(price) : null,
+        description: description || null,
+        createdAt: new Date(),
+        userId,
       },
     });
 
@@ -56,3 +57,4 @@ export async function POST(req: Request) {
     );
   }
 }
+
