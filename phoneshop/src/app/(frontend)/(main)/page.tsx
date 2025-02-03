@@ -42,12 +42,12 @@ const CatalogPage = () => {
         <h2 className="text-2xl font-bold text-left">Каталог брендів</h2>
         <div className="grid grid-cols-3 gap-4">
           {[ 
-            { name: "Samsung",  color: "bg-blue-500",  imageUrl: "https://cdn.worldvectorlogo.com/logos/samsung-8.svg", link: "/catalog?brand=Samsung" },
-            { name: "Apple", color: "bg-gray-200 text-white", imageUrl: "https://cdn.worldvectorlogo.com/logos/apple-11.svg", link: "/catalog?brand=Apple" },
-            { name: "Huawei", color: "bg-white border border-gray-300 text-red-600", imageUrl: "https://cdn.worldvectorlogo.com/logos/huawei-2.svg", link: "/catalog?brand=Huawei" },
-            { name: "Vivo", color: "bg-gray-400", imageUrl: "https://cdn.worldvectorlogo.com/logos/vivo-logo-2019.svg", link: "/catalog?brand=Vivo" },
-            { name: "Xiaomi", color: "bg-orange-500", imageUrl: "https://cdn.worldvectorlogo.com/logos/xiaomi-4.svg", link: "/catalog?brand=Xiaomi" },
-            { name: "Oppo", color: "bg-green-100", imageUrl: "https://www.logo.wine/a/logo/Oppo/Oppo-Logo.wine.svg", link: "/catalog?brand=Oppo" }
+            { name: "Samsung",  color: "bg-blue-500",  imageUrl: "https://cdn.worldvectorlogo.com/logos/samsung-8.svg", link: "/catalog" },
+            { name: "Apple", color: "bg-gray-200 text-white", imageUrl: "https://cdn.worldvectorlogo.com/logos/apple-11.svg", link: "/catalog" },
+            { name: "Huawei", color: "bg-white border border-gray-300 text-red-600", imageUrl: "https://cdn.worldvectorlogo.com/logos/huawei-2.svg", link: "/catalog" },
+            { name: "Vivo", color: "bg-gray-400", imageUrl: "https://cdn.worldvectorlogo.com/logos/vivo-logo-2019.svg", link: "/catalog" },
+            { name: "Xiaomi", color: "bg-orange-500", imageUrl: "https://cdn.worldvectorlogo.com/logos/xiaomi-4.svg", link: "/catalog" },
+            { name: "Oppo", color: "bg-green-100", imageUrl: "https://www.logo.wine/a/logo/Oppo/Oppo-Logo.wine.svg", link: "/catalog" }
           ].map((brand) => (
             <Link key={brand.name} href={brand.link} passHref>
               <div
